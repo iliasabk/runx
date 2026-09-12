@@ -157,7 +157,8 @@ mod tests {
     #[test]
     fn windows_child_process_cwd_starts_node_from_a_canonical_directory()
     -> Result<(), Box<dyn std::error::Error>> {
-        let directory = tempfile::tempdir()?.path().canonicalize()?;
+        let temporary_directory = tempfile::tempdir()?;
+        let directory = temporary_directory.path().canonicalize()?;
         assert!(directory.to_string_lossy().starts_with(r"\\?\"));
         let cwd = child_process_cwd(&directory);
         let status = Command::new("node")
