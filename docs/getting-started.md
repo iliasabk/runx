@@ -5,53 +5,66 @@ checked-in `examples/hello-world` package so the commands stay tied to the repo.
 
 ## Prerequisites
 
-- Rust 1.97 or newer for the native CLI path.
-- Node.js 20 or newer for the checked-in `hello-world` runner command. No
-  TypeScript install is required for the native CLI path.
-- pnpm 10 or newer only when exercising the npm wrapper or TypeScript package
-  tests.
+- Git and Node.js 20 or newer. Node supplies both npm for installing Runx and
+  the checked-in `hello-world` runner command.
+- Rust 1.97 or newer only when building the CLI from source.
+- pnpm 10 or newer only when running repository checks.
 
-Build the native CLI from the OSS workspace:
+Install the native CLI and check that it starts. These commands are the same in
+Bash on macOS/Linux and in PowerShell on Windows:
 
 ```bash
-cargo build --manifest-path crates/Cargo.toml -p runx-cli
+npm install --global @runxhq/cli
+runx --help
+git clone --depth 1 https://github.com/runxhq/runx.git
+cd runx
 ```
 
-On macOS 26, complete the
+Contributors building from source can instead run
+`cargo build --manifest-path crates/Cargo.toml -p runx-cli` and replace `runx`
+below with `crates/target/debug/runx`. On macOS 26, complete the
 [Developer Tools permission prerequisite](../CONTRIBUTING.md#macos-developer-tools-permission)
 before troubleshooting a stalled Rust build.
 
 ## Run The Example
 
-Run the skill directly through the CLI:
+On macOS or Linux, choose a temporary receipt directory and run the skill:
 
 ```bash
 export RUNX_RECEIPT_DIR="$(mktemp -d)"
-crates/target/debug/runx skill examples/hello-world \
+runx skill ./examples/hello-world \
   --message "hello from docs" \
   --json
 ```
 
-The JSON response should report `status: "sealed"` and include a receipt id.
+The equivalent PowerShell commands on Windows are:
+
+```powershell
+$env:RUNX_RECEIPT_DIR = Join-Path ([System.IO.Path]::GetTempPath()) "runx-first-receipt"
+New-Item -ItemType Directory -Force $env:RUNX_RECEIPT_DIR | Out-Null
+runx skill .\examples\hello-world --message "hello from Windows" --json
+```
+
+The `runx.skill_run.v1` response should report `status: "sealed"` and include a
+`receipt_id`.
 For local development, no production signer is required: when the signer
 environment is absent, runx seals local-development receipts. Publishing and
 hosted verification still require real authority.
-The npm wrapper may be used for package-distribution checks, but it should
-delegate to the same Rust binary behavior.
 
 ## Inspect The Receipt
 
-The quickstart writes receipts to the temporary directory stored in
-`RUNX_RECEIPT_DIR`. Use the id from the previous command as a history query:
+The quickstart writes the sealed receipt and its local index inside the
+directory stored in `$RUNX_RECEIPT_DIR` in Bash or
+`$env:RUNX_RECEIPT_DIR` in PowerShell. Use the id from the previous command as
+a detailed history query:
 
 ```bash
-crates/target/debug/runx history <receipt-id> --json
+runx history <receipt-id> --detail --json
 ```
 
-The history projection should show a `runx.receipt.v1` receipt stamped by the
-local issuer. It is durable local evidence that runx executed the skill,
-recorded the input shape, and captured the output without relying on prose
-claims.
+The `runx.receipt_inspection.v1` projection should show the receipt status,
+authority, decisions, acts, seal summary, and local issuer verification. It
+does not reproduce the execution input or output body.
 
 ## Production Receipt Signing
 
@@ -78,12 +91,12 @@ intentionally unavailable, provide the public verification key instead:
 ```bash
 export RUNX_RECEIPT_VERIFY_KID="hosted-prod-key"
 export RUNX_RECEIPT_VERIFY_ED25519_PUBLIC_KEY_BASE64="<32-byte-ed25519-public-key-base64>"
-crates/target/debug/runx history <receipt-id> --json
+runx history <receipt-id> --detail --json
 ```
 
 ## Next
 
-- Use `crates/target/debug/runx new docs-demo --objective "Create a bounded
+- Use `runx new docs-demo --objective "Create a bounded
   documentation decision skill"` to enter the canonical Skill Lab build lane.
   Runx inspects the catalog, returns an exact agent/resume handoff unless
   `--managed-agent` was explicitly authorized, and writes only the validated

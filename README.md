@@ -89,7 +89,9 @@ runx skill ./examples/hello-world -i message="hello, runx" --json
 ```
 
 The checked-in `examples/hello-world` skill runs a local command, and the final
-`--json` output includes the sealed receipt (`runx.receipt.v1`).
+`--json` output is a `runx.skill_run.v1` result with `status: "sealed"` and a
+`receipt_id`. Inspect the governance record with
+`runx history <receipt-id> --detail --json`.
 
 `business-ops` is one prebuilt skill for routing a business signal end to end:
 

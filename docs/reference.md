@@ -714,26 +714,6 @@ When enabled, local execution rejects known inline interpreter and shell eval
 forms such as `node -e`, `python -c`, and `bash -lc`. Move the program into a
 checked-in script file and invoke that file instead.
 
-## Trainable Exports
-
-Trainable export is currently a TypeScript-maintained projection command. It can
-project verified receipt lineage into newline-delimited training rows without
-mutating the original receipts, but it is not yet part of the native Rust CLI
-surface:
-
-```bash
-runx export-receipts --trainable
-runx export-receipts --trainable --receipt-dir ./.runx/receipts --status complete --source cli-tool
-```
-
-Rows are emitted as JSONL and follow the public training contract published at:
-
-- `https://runx.ai/spec/training/trainable-receipt-row.schema.json`
-
-The export keeps receipt identity, verified outcome resolution, ledger
-artifacts, and runner provenance together so downstream training and eval
-systems can consume governed lineage instead of raw prompt logs.
-
 ## Harness
 
 Run a whole skill package to execute its inline `X.yaml` cases and every
