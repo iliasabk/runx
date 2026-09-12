@@ -66,9 +66,10 @@ impl WorkerLaunchPlan {
 impl WorkerSession {
     pub(super) fn start(plan: &WorkerLaunchPlan) -> Result<Self, RuntimeError> {
         let mut command = Command::new(&plan.command);
+        let cwd = crate::process::child_process_cwd(&plan.cwd);
         command
             .args(&plan.args)
-            .current_dir(&plan.cwd)
+            .current_dir(cwd.as_ref())
             .env_clear()
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())

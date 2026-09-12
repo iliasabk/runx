@@ -63,9 +63,10 @@ pub(crate) fn spawn_tokio_process(
         source,
     })?;
     let mut command = tokio::process::Command::new(&spec.command);
+    let cwd = super::child_process_cwd(&spec.cwd);
     command
         .args(&spec.args)
-        .current_dir(&spec.cwd)
+        .current_dir(cwd.as_ref())
         .env_clear()
         .envs(&spec.env)
         .stdin(Stdio::piped())

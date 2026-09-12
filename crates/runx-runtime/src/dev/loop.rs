@@ -369,10 +369,11 @@ fn initialize_fixture_git(
 }
 
 fn run_required_process(command: &str, args: &[&str], cwd: &Path) -> Result<(), DevError> {
+    let child_cwd = crate::process::child_process_cwd(cwd);
     let output = crate::process::with_spawn_lock(|| {
         Command::new(command)
             .args(args)
-            .current_dir(cwd)
+            .current_dir(child_cwd.as_ref())
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
