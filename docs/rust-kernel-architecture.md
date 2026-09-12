@@ -583,9 +583,8 @@ than kernel parity. It includes `skill`, `resume`, `replay`, `diff`,
 `connect`, `config`, `new`, `init`, `harness`, `list`, `doctor`, `dev`,
 `mcp serve`, `tool search`, `tool inspect`, and `tool build`, plus any
 pre-existing aliases that the matrix explicitly preserves and JSON/non-JSON
-modes. `export-receipts --trainable` remains a TypeScript-maintained projection
-command until a native export is explicitly promoted. Payment surfaces use
-clean v1 names only. `spend` is the canonical buyer contract; `charge`,
+modes. Payment surfaces use clean v1 names only. `spend` is the canonical buyer
+contract; `charge`,
 `refund`, and `settle-invoice` are the other canonical contracts, while
 `x402-pay` and `stripe-pay` are discoverable hosted facades. Their OSS graphs
 use the generic provider mutation/readback boundary. Quote, reservation, rail
