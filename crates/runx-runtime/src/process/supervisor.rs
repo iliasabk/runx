@@ -91,7 +91,8 @@ fn spawn_process(spec: &ProcessSpec) -> Result<OwnedProcess, ProcessSupervisorEr
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
     if let Some(cwd) = spec.cwd.as_ref() {
-        command.current_dir(cwd);
+        let cwd = super::child_process_cwd(cwd);
+        command.current_dir(cwd.as_ref());
     }
     OwnedProcess::spawn(command)
         .map_err(|source| ProcessSupervisorError::io(spawn_context(spec), source))
