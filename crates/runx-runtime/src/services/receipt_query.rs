@@ -9,10 +9,9 @@ use self::projection::render_query;
 use crate::RuntimeError;
 use crate::journal::{LocalHistoryProjection, list_local_history_with_policy};
 use crate::receipts::RuntimeReceiptSignaturePolicy;
-use crate::receipts::paths::{ReceiptPathInputs, RuntimeReceiptConfig, resolve_receipt_path};
 use crate::receipts::store::LocalReceiptStore;
-use crate::services::receipt_proof::prove_receipts;
-use crate::services::receipts::production_receipt_verifier;
+use crate::services::ReceiptReadContext;
+use crate::services::receipt_proof::prove_receipts_with_context;
 
 mod input;
 mod projection;
@@ -26,29 +25,14 @@ pub(crate) fn query_receipts(
     cwd: &Path,
 ) -> Result<JsonObject, RuntimeError> {
     let request = QueryRequest::parse(inputs)?;
-    let verifier = production_receipt_verifier(env)?;
-    let signature_mode = if verifier.is_some() {
-        "production"
-    } else {
-        "local-development"
-    };
-    let policy = verifier.as_ref().map_or_else(
-        RuntimeReceiptSignaturePolicy::local_development,
-        |verifier| RuntimeReceiptSignaturePolicy::production(verifier),
-    );
-    let resolved = resolve_receipt_path(ReceiptPathInputs {
-        explicit_dir: None,
-        runtime_config: Some(&RuntimeReceiptConfig::default()),
-        env,
-        cwd,
-    });
-    let store = LocalReceiptStore::new(&resolved.path);
+    let context = ReceiptReadContext::resolve(env, cwd)?;
+    let resolved = context.resolved();
     let history = load_history(
         &request,
-        &store,
+        context.store(),
         &resolved.workspace_base,
         &resolved.project_runx_dir,
-        policy,
+        context.signature_policy(),
     )?;
     let history_ids = history
         .as_ref()
@@ -67,14 +51,13 @@ pub(crate) fn query_receipts(
         proof_ids,
         request.verify_chain || request.exact_ids.is_some(),
         proof_limit_exceeded,
-        env,
-        cwd,
+        &context,
     )?;
     render_query(
         request,
         history,
         proof,
-        signature_mode,
+        context.signature_mode(),
         resolved.label.as_str(),
         proof_limit_exceeded,
         proof_count,
@@ -106,13 +89,12 @@ fn load_proof(
     receipt_ids: &[String],
     requested: bool,
     limit_exceeded: bool,
-    env: &BTreeMap<String, String>,
-    cwd: &Path,
+    context: &ReceiptReadContext,
 ) -> Result<Option<JsonObject>, RuntimeError> {
     if !requested || receipt_ids.is_empty() || limit_exceeded {
         return Ok(None);
     }
-    prove_receipts(receipt_ids, env, cwd).map(Some)
+    prove_receipts_with_context(receipt_ids, context).map(Some)
 }
 
 fn invalid(message: impl Into<String>) -> RuntimeError {

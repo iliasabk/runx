@@ -4,6 +4,14 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  isRustCliSignatureEntry,
+  loadRustCliPlatforms,
+  nativeRustCliPackageName,
+} from "./rust-cli-topology.mjs";
+
+type RustCliPlatformSpec = ReturnType<typeof loadRustCliPlatforms>[number];
+
 const workspaceRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
@@ -19,16 +27,8 @@ interface Options {
   readonly verifySignatures: boolean;
 }
 
-interface PlatformSpec {
-  readonly key: string;
-  readonly os: "darwin" | "linux" | "win32";
-  readonly cpu: "arm64" | "x64";
-  readonly binary: "bin/runx" | "bin/runx.exe";
-  readonly worker: "bin/runx-js-worker" | "bin/runx-js-worker.exe";
-}
-
 const selectorPackageName = "@runxhq/cli";
-const supportedPlatforms = loadSupportedPlatforms();
+const supportedPlatforms = loadRustCliPlatforms(workspaceRoot);
 
 const options = parseArgs(process.argv.slice(2));
 const artifactDir = path.resolve(workspaceRoot, options.artifactDir);
@@ -546,7 +546,7 @@ function inspectSignature(packageDir: string, bin: string, worker: string, outpu
     output.push(finding("signature_entries_missing", signaturePath, "signature manifest must include at least one signature entry"));
   } else {
     for (const [index, entry] of signature.signatures.entries()) {
-      if (!isSignatureEntry(entry)) {
+      if (!isRustCliSignatureEntry(entry)) {
         output.push(finding("signature_entry_invalid", signaturePath, `signature entry ${index} must include non-empty kind and value strings`));
       }
     }
@@ -630,52 +630,11 @@ function isSelectorPackage(manifest: { readonly name?: string; readonly runx?: {
   return manifest.name === selectorPackageName && Boolean(manifest.runx?.nativeSelector);
 }
 
-function loadSupportedPlatforms(): readonly PlatformSpec[] {
-  const topologyPath = path.join(workspaceRoot, "packages", "cli", "native", "supported-platforms.json");
-  const topology = JSON.parse(readFileSync(topologyPath, "utf8")) as {
-    readonly schema?: string;
-    readonly nativePackages?: Record<string, {
-      readonly os?: PlatformSpec["os"];
-      readonly cpu?: PlatformSpec["cpu"];
-      readonly binary?: string;
-      readonly worker?: string;
-    }>;
-  };
-  if (topology.schema !== "runx.rust_cli_selector_topology.v1" || !topology.nativePackages) {
-    throw new Error("Rust CLI selector topology is missing or unsupported");
-  }
-  return Object.entries(topology.nativePackages).map(([key, entry]) => {
-    if (!isPlatformOs(entry.os) || !isPlatformCpu(entry.cpu) || !entry.binary || !entry.worker) {
-      throw new Error(`Rust CLI selector topology entry ${key} is incomplete`);
-    }
-    if (!matchesBinary(entry.binary) || !matchesWorker(entry.worker)) {
-      throw new Error(`Rust CLI selector topology entry ${key} has invalid executable paths`);
-    }
-    return { key, os: entry.os, cpu: entry.cpu, binary: entry.binary, worker: entry.worker };
-  });
-}
-
-function matchesBinary(value: string): value is PlatformSpec["binary"] {
-  return value === "bin/runx" || value === "bin/runx.exe";
-}
-
-function isPlatformOs(value: unknown): value is PlatformSpec["os"] {
-  return value === "darwin" || value === "linux" || value === "win32";
-}
-
-function isPlatformCpu(value: unknown): value is PlatformSpec["cpu"] {
-  return value === "arm64" || value === "x64";
-}
-
-function matchesWorker(value: string): value is PlatformSpec["worker"] {
-  return value === "bin/runx-js-worker" || value === "bin/runx-js-worker.exe";
-}
-
 function nativePackageName(platform: string): string {
-  return `${selectorPackageName}-${platform}`;
+  return nativeRustCliPackageName(selectorPackageName, platform);
 }
 
-function nativeSpecForPackage(packageName: string | undefined): PlatformSpec | undefined {
+function nativeSpecForPackage(packageName: string | undefined): RustCliPlatformSpec | undefined {
   return supportedPlatforms.find((entry) => nativePackageName(entry.key) === packageName);
 }
 
@@ -696,15 +655,6 @@ function readJson<T>(filePath: string, output: Finding[], rule: string): T | nul
     output.push(finding(rule, filePath, errorMessage(error)));
     return null;
   }
-}
-
-function isSignatureEntry(value: unknown): value is { readonly kind: string; readonly value: string } {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-  const entry = value as { readonly kind?: unknown; readonly value?: unknown };
-  return typeof entry.kind === "string" && entry.kind.trim() !== ""
-    && typeof entry.value === "string" && entry.value.trim() !== "";
 }
 
 function isInside(candidatePath: string, rootPath: string): boolean {

@@ -5,6 +5,14 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  isRustCliSignatureEntry,
+  loadRustCliPlatforms,
+  nativeRustCliPackageName,
+  rustCliPlatformForKey,
+  rustCliPlatformKey,
+} from "./rust-cli-topology.mjs";
+
 const workspaceRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
@@ -17,15 +25,7 @@ interface Options {
   readonly signatureManifest: string | null;
 }
 
-interface PlatformSpec {
-  readonly key: string;
-  readonly os: "darwin" | "linux" | "win32";
-  readonly cpu: "arm64" | "x64";
-  readonly binaryName: "runx" | "runx.exe";
-  readonly workerName: "runx-js-worker" | "runx-js-worker.exe";
-}
-
-const supportedPlatforms = loadSupportedPlatforms();
+const supportedPlatforms = loadRustCliPlatforms(workspaceRoot);
 
 const options = parseArgs(process.argv.slice(2));
 const packageRoot = path.join(workspaceRoot, "packages", "cli");
@@ -40,8 +40,11 @@ const manifest = JSON.parse(readFileSync(path.join(packageRoot, "package.json"),
   readonly publishConfig?: unknown;
 };
 
-const platform = platformSpec(options.platform ?? platformKey(process.platform, process.arch));
-const nativePackage = nativePackageName(manifest.name, platform.key);
+const platform = rustCliPlatformForKey(
+  supportedPlatforms,
+  options.platform ?? rustCliPlatformKey(supportedPlatforms, process.platform, process.arch),
+);
+const nativePackage = nativeRustCliPackageName(manifest.name, platform.key);
 const binaryPath = resolveCandidatePath(options.binary);
 const workerPath = resolveCandidatePath(options.worker);
 const outDir = path.resolve(workspaceRoot, options.outDir);
@@ -136,7 +139,7 @@ writeFileSync(
     },
     runx: selectorTopology(manifest.name),
     optionalDependencies: Object.fromEntries(
-      supportedPlatforms.map((entry) => [nativePackageName(manifest.name, entry.key), manifest.version]),
+      supportedPlatforms.map((entry) => [nativeRustCliPackageName(manifest.name, entry.key), manifest.version]),
     ),
     files: [
       "LICENSE",
@@ -327,74 +330,6 @@ function existsPath(filePath: string): boolean {
   }
 }
 
-function platformKey(platform: NodeJS.Platform, arch: string): string {
-  const match = supportedPlatforms.find((entry) => entry.os === platform && entry.cpu === arch);
-  if (match) return match.key;
-  throw new Error(`unsupported Rust CLI package platform: ${platform}/${arch}`);
-}
-
-function loadSupportedPlatforms(): readonly PlatformSpec[] {
-  const topology = JSON.parse(
-    readFileSync(path.join(workspaceRoot, "packages", "cli", "native", "supported-platforms.json"), "utf8"),
-  ) as {
-    readonly schema?: string;
-    readonly nativePackages?: Record<string, {
-      readonly os?: PlatformSpec["os"];
-      readonly cpu?: PlatformSpec["cpu"];
-      readonly binary?: string;
-      readonly worker?: string;
-    }>;
-  };
-  if (topology.schema !== "runx.rust_cli_selector_topology.v1" || !topology.nativePackages) {
-    throw new Error("Rust CLI selector topology is missing or unsupported");
-  }
-  return Object.entries(topology.nativePackages).map(([key, entry]) => {
-    if (!isPlatformOs(entry.os) || !isPlatformCpu(entry.cpu) || !entry.binary || !entry.worker) {
-      throw new Error(`Rust CLI selector topology entry ${key} is incomplete`);
-    }
-    const binaryName = path.posix.basename(entry.binary);
-    const workerName = path.posix.basename(entry.worker);
-    if (!isBinaryName(binaryName) || !isWorkerName(workerName)) {
-      throw new Error(`Rust CLI selector topology entry ${key} has invalid executable paths`);
-    }
-    return {
-      key,
-      os: entry.os,
-      cpu: entry.cpu,
-      binaryName,
-      workerName,
-    };
-  });
-}
-
-function isPlatformOs(value: unknown): value is PlatformSpec["os"] {
-  return value === "darwin" || value === "linux" || value === "win32";
-}
-
-function isPlatformCpu(value: unknown): value is PlatformSpec["cpu"] {
-  return value === "arm64" || value === "x64";
-}
-
-function isBinaryName(value: string): value is PlatformSpec["binaryName"] {
-  return value === "runx" || value === "runx.exe";
-}
-
-function isWorkerName(value: string): value is PlatformSpec["workerName"] {
-  return value === "runx-js-worker" || value === "runx-js-worker.exe";
-}
-
-function platformSpec(key: string): PlatformSpec {
-  const spec = supportedPlatforms.find((entry) => entry.key === key);
-  if (!spec) {
-    throw new Error(`unsupported Rust CLI package platform: ${key}`);
-  }
-  return spec;
-}
-
-function nativePackageName(selectorPackage: string, platform: string): string {
-  return `${selectorPackage}-${platform}`;
-}
-
 function selectorTopology(selectorPackage: string): unknown {
   return {
     nativeSelector: {
@@ -470,20 +405,11 @@ function readSignatureManifest(
     throw new Error("signature manifest must include at least one signature entry");
   }
   for (const [index, entry] of manifest.signatures.entries()) {
-    if (!isSignatureEntry(entry)) {
+    if (!isRustCliSignatureEntry(entry)) {
       throw new Error(`signature manifest entry ${index} must include non-empty kind and value strings`);
     }
   }
   return manifest;
-}
-
-function isSignatureEntry(value: unknown): value is { readonly kind: string; readonly value: string } {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-  const entry = value as { readonly kind?: unknown; readonly value?: unknown };
-  return typeof entry.kind === "string" && entry.kind.trim() !== ""
-    && typeof entry.value === "string" && entry.value.trim() !== "";
 }
 
 function sha256(bytes: Buffer): string {

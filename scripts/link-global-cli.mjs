@@ -1,27 +1,12 @@
-import { execFileSync } from "node:child_process";
-import { mkdir, lstat, readlink, realpath, rm, symlink } from "node:fs/promises";
+import { mkdir, realpath, rm, symlink } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { describeSymbolicLink, resolveGlobalNpmPrefix } from "./global-npm-prefix.mjs";
+
 const workspaceRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const cliPackageDir = path.join(workspaceRoot, "packages", "cli");
-const globalPrefix = execFileSync("npm", ["prefix", "-g"], {
-  cwd: workspaceRoot,
-  encoding: "utf8",
-  env: Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => !key.startsWith("npm_config_") && !key.startsWith("npm_package_")),
-  ),
-}).trim();
-
-if (!path.isAbsolute(globalPrefix)) {
-  throw new Error(`npm prefix -g returned a non-absolute path: ${globalPrefix}`);
-}
-
-if (globalPrefix === workspaceRoot || globalPrefix.startsWith(`${workspaceRoot}${path.sep}`)) {
-  throw new Error(
-    `refusing to link into workspace-local prefix ${globalPrefix}; check your global npm prefix configuration`,
-  );
-}
+const globalPrefix = resolveGlobalNpmPrefix(workspaceRoot);
 
 const globalBinDir = path.join(globalPrefix, "bin");
 const globalNodeModulesDir = path.join(globalPrefix, "lib", "node_modules");
@@ -83,8 +68,8 @@ async function unlinkGlobal() {
 }
 
 async function checkGlobal() {
-  const packageState = await describeLink(globalPackageLink);
-  const binState = await describeLink(globalBinLink);
+  const packageState = await describeSymbolicLink(globalPackageLink);
+  const binState = await describeSymbolicLink(globalBinLink);
 
   process.stdout.write(
     [
@@ -94,20 +79,6 @@ async function checkGlobal() {
       `binary   ${binState}`,
     ].join("\n") + "\n",
   );
-}
-
-async function describeLink(filePath) {
-  try {
-    const stats = await lstat(filePath);
-    if (stats.isSymbolicLink()) {
-      const target = await readlink(filePath);
-      const resolved = await realpath(filePath);
-      return `${filePath} -> ${target} (${resolved})`;
-    }
-    return `${filePath} exists but is not a symlink`;
-  } catch {
-    return `${filePath} missing`;
-  }
 }
 
 async function replacePath(filePath, target, symlinkType) {

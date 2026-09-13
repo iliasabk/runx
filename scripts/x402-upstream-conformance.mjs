@@ -7,6 +7,8 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { inspectGitCheckout, optionValue, writeJson } from "./lib/x402-conformance.mjs";
+
 const DEFAULT_UPSTREAM_DIR = "/tmp/x402-upstream";
 const DEFAULT_ENDPOINT = "/exact/evm/eip3009";
 const EXPECTED_UPSTREAM_SHA = "230e6a9a7eebce22c911a0687d6f4e6d1ac019f7";
@@ -29,13 +31,13 @@ if (args.includes("--help") || args.includes("-h")) {
 }
 
 const mode = args.includes("--run") ? "run" : "check";
-const upstreamDir = option("--upstream-dir") || process.env.X402_UPSTREAM_DIR || DEFAULT_UPSTREAM_DIR;
+const upstreamDir = optionValue(args, "--upstream-dir") || process.env.X402_UPSTREAM_DIR || DEFAULT_UPSTREAM_DIR;
 const artifactDir =
-  option("--artifact-dir") || process.env.RUNX_X402_CONFORMANCE_ARTIFACT_DIR || path.join(os.tmpdir(), "runx-x402-upstream-conformance");
-const endpoint = option("--endpoint") || process.env.RUNX_X402_CONFORMANCE_ENDPOINT || DEFAULT_ENDPOINT;
+  optionValue(args, "--artifact-dir") || process.env.RUNX_X402_CONFORMANCE_ARTIFACT_DIR || path.join(os.tmpdir(), "runx-x402-upstream-conformance");
+const endpoint = optionValue(args, "--endpoint") || process.env.RUNX_X402_CONFORMANCE_ENDPOINT || DEFAULT_ENDPOINT;
 const e2eDir = path.join(upstreamDir, "e2e");
 
-const upstream = inspectUpstream(upstreamDir, e2eDir);
+const upstream = inspectGitCheckout(upstreamDir, path.join(e2eDir, "package.json"));
 const sourceVerification = inspectSourcePins(upstreamDir, sourcePin.sources);
 const missingEnv = REQUIRED_ENV.filter((name) => !process.env[name]);
 const command = buildCommand({ e2eDir, artifactDir, endpoint });
@@ -65,24 +67,24 @@ const report = {
 };
 
 if (mode === "check") {
-  write(report);
+  writeJson(report);
   process.exit(upstream.available && pinMatches && sourceVerification.matches ? 0 : 1);
 }
 
 if (!upstream.available) {
-  write(report);
+  writeJson(report);
   fail(`x402 upstream checkout not found at ${upstreamDir}`);
 }
 if (!pinMatches) {
-  write(report);
+  writeJson(report);
   fail(`x402 upstream checkout must be pinned to ${EXPECTED_UPSTREAM_SHA}`);
 }
 if (!sourceVerification.matches) {
-  write(report);
+  writeJson(report);
   fail("x402 upstream source files do not match the repo-owned SHA-256 pin");
 }
 if (missingEnv.length > 0) {
-  write(report);
+  writeJson(report);
   fail(`missing required environment variables: ${missingEnv.join(", ")}`);
 }
 
@@ -114,20 +116,6 @@ function buildCommand({ e2eDir: dir, artifactDir: outDir, endpoint: endpointPath
     `--output-json=${path.join(outDir, "x402-upstream-e2e.json")}`,
     `--log=${path.join(outDir, "x402-upstream-e2e.log")}`,
   ];
-}
-
-function inspectUpstream(dir, e2e) {
-  if (!existsSync(path.join(e2e, "package.json"))) {
-    return { available: false, sha: null };
-  }
-  const result = spawnSync("git", ["-C", dir, "rev-parse", "HEAD"], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  return {
-    available: result.status === 0,
-    sha: result.status === 0 ? result.stdout.trim() : null,
-  };
 }
 
 function inspectSourcePins(dir, sources) {
@@ -166,20 +154,6 @@ function readJson(filePath) {
   } catch (error) {
     fail(`cannot read upstream pin: ${error instanceof Error ? error.message : String(error)}`);
   }
-}
-
-function option(name) {
-  const index = args.indexOf(name);
-  if (index !== -1) {
-    return args[index + 1];
-  }
-  const prefix = `${name}=`;
-  const inline = args.find((arg) => arg.startsWith(prefix));
-  return inline ? inline.slice(prefix.length) : undefined;
-}
-
-function write(value) {
-  process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 }
 
 function fail(message) {
