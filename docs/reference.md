@@ -108,6 +108,12 @@ runx config set agent.model gpt-5.1
 printf '%s' "$OPENAI_API_KEY" | runx config set agent.api_key --from-stdin
 ```
 
+`runx resume` continues a paused run from its durable checkpoint. A sealed run
+is terminal; inspect it with `runx history <receipt-id> --detail`. To execute
+the work again, invoke the original `runx skill` command and retain both
+receipts if you need to compare the outcomes. The current CLI has no standalone
+`replay` or run `diff` command.
+
 The resume file keeps agent work and human authorization distinct:
 
 ```json
