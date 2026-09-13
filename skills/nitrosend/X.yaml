@@ -1,5 +1,5 @@
 skill: nitrosend
-version: "0.4.6"
+version: "0.4.7"
 catalog:
   kind: skill
   audience: public
@@ -690,21 +690,57 @@ runners:
         brand_sid: brnd_demo123
     graph:
       name: nitrosend-apply-draft
-      result_from: [apply]
+      result_from: [apply, blocked]
       steps:
+        - id: preflight
+          inputs:
+            mode: act
+            operation: "$input.operation"
+            arguments: "$input.arguments"
+            brand_sid: "$input.brand_sid"
+          run:
+            type: javascript
+            module: graph/provider-operation/nitrosend-operation.mjs
+            export: prepareOperation
+            outputs:
+              operation_plan: object
+        - id: blocked
+          when:
+            field: preflight.operation_plan.decision
+            not_equals: ready
+          context:
+            operation_plan: preflight.operation_plan
+          run:
+            type: javascript
+            module: graph/provider-operation/nitrosend-operation.mjs
+            export: blockedOperation
+            outputs:
+              provider_evidence: object
+          artifacts:
+            named_emits:
+              provider_evidence: provider_evidence
+            packets:
+              provider_evidence: nitrosend.provider_evidence.v1
         - id: approve-draft
+          when:
+            field: preflight.operation_plan.decision
+            equals: ready
           run:
             type: approval
           inputs:
             gate_id: nitrosend.apply_draft.approval
             reason: Apply this reviewed draft or image ingest to the live Nitrosend account. This does not deliver to recipients or activate a flow.
         - id: apply
+          when:
+            field: preflight.operation_plan.decision
+            equals: ready
           skill: graph/provider-operation
           runner: act
-          idempotency_key: nitrosend-apply-draft
+          idempotency_key: "$input.arguments.idempotency_key"
           inputs:
             operation: "$input.operation"
             arguments: "$input.arguments"
+            idempotency_key: "$input.arguments.idempotency_key"
             brand_sid: "$input.brand_sid"
     policy:
       guards:
@@ -1027,111 +1063,74 @@ runners:
     type: graph
     credential: nitrosend
     inputs:
-      objective:
+      target_type:
         type: string
         required: true
-        description: One bounded email objective compiled by Nitrosend into an authoring contract.
-      name:
+        description: Nitrosend creative surface to compose or validate.
+        schema: { enum: [campaign, flow, template] }
+      composition_mode:
         type: string
-        required: false
-        description: Optional campaign working name retained in the composition intent.
-      design_mode_override:
-        type: string
-        required: false
-        description: Optional Nitrosend design mode such as premium_rich, premium_minimal, founder_letter, or utility_plain.
-      brand_context_ref:
-        type: string
-        required: false
-        description: Optional current context ref from a prior intent; omit on first composition to receive full context.
-      operator_context:
-        type: string
-        required: false
-        description: Extra authoring constraints; this is context, never delivery authority.
+        required: true
+        description: intent returns a frozen authoring contract; validate checks a host-authored candidate without persistence.
+        schema: { enum: [intent, validate] }
+      arguments:
+        type: object
+        required: true
+        description: Exact surface-specific intent or validation fields. The runner owns composition_mode and strips persistence-only retry fields from this read.
+        schema:
+          additionalProperties: true
       brand_sid:
         type: string
         required: false
         description: Optional public Nitrosend brand SID.
     examples:
-      - objective: Announce the August product update to engaged customers.
-        name: August product update
-        design_mode_override: premium_minimal
-        operator_context: Keep the email concise and use the current brand voice.
+      - target_type: campaign
+        composition_mode: intent
+        arguments:
+          goal: Announce the August product update to engaged customers.
+          name: August product update
+          design_mode_override: premium_minimal
+          user_instruction: Keep the email concise and use the current brand voice.
+        brand_sid: brnd_demo123
+      - target_type: flow
+        composition_mode: validate
+        arguments:
+          contract_id: ecc_welcome_fixture
+          name: Trial welcome series
+          trigger: { event: contact_add }
+          steps:
+            - type: email
+              action_name: flow-step-0
+              subject: Welcome
+              design:
+                sections:
+                  - { type: header, props: {} }
+                  - { type: footer, props: {} }
+        brand_sid: brnd_demo123
+      - target_type: template
+        composition_mode: validate
+        arguments:
+          contract_id: ecc_template_fixture
+          name: Product update
+          subject: A useful update
+          sections:
+            - { type: header, props: {} }
+            - { type: footer, props: {} }
         brand_sid: brnd_demo123
     graph:
       name: nitrosend-compose-email
-      result_from: [validate]
+      result_from: [compose]
       steps:
-        - id: intent
+        - id: compose
           skill: graph/provider-operation
           runner: read
           inputs:
-            operation: compose_campaign_intent
+            operation: compose_email
             arguments:
-              composition_mode: intent
-              goal: "$input.objective"
-              name: "$input.name"
-              design_mode_override: "$input.design_mode_override"
-              brand_context_ref: "$input.brand_context_ref"
-              user_instruction: "$input.operator_context"
+              target_type: "$input.target_type"
+              composition_mode: "$input.composition_mode"
+              arguments: "$input.arguments"
             brand_sid: "$input.brand_sid"
-        - id: author
-          when:
-            field: intent.provider_evidence.data.decision
-            equals: ok
-          skill: .
-          runner: compose-email-candidate
-          inputs:
-            objective: "$input.objective"
-            operator_context: "$input.operator_context"
-          context:
-            composition_intent: intent.provider_evidence.data
-        - id: validate
-          when:
-            field: author.campaign_candidate.decision
-            equals: ready
-          skill: graph/provider-operation
-          runner: read
-          inputs:
-            operation: validate_campaign_composition
-            brand_sid: "$input.brand_sid"
-          context:
-            arguments: author.campaign_candidate.arguments
-
-  compose-email-candidate:
-    type: agent-task
-    agent: builder
-    task: compose-email-from-contract
-    outputs:
-      campaign_candidate: object
-    inputs:
-      objective:
-        type: string
-        required: true
-        description: One bounded email objective.
-      composition_intent:
-        type: json
-        packet: nitrosend.provider_evidence.v1
-        required: true
-        description: Authoritative provider evidence from compose_campaign_intent, supplied directly or as graph context.
-      operator_context:
-        type: string
-        required: false
-        description: Extra authoring constraints that do not grant persistence or delivery authority.
-    examples:
-      - objective: Announce the August product update to engaged customers.
-        composition_intent:
-          decision: ok
-          provider: nitrosend
-          mode: read
-          operation: compose_campaign_intent
-          tool: nitro_compose_campaign
-          provider_ref: null
-          result:
-            authoring_contract: { design_mode: premium_minimal }
-            brand_context: { name: Example }
-          evidence: null
-          blockers: []
-        operator_context: Produce a candidate only; do not persist or deliver.
   analytics:
     type: graph
     credential: nitrosend

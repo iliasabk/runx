@@ -466,55 +466,69 @@ test("projects an HTTP 200 MCP tool error as provider failure", () => {
   assert.equal(failed.result.message, "plan unavailable");
 });
 
-test("admits only non-persisting campaign composition reads", () => {
-  const intent = prepareOperation({
-    mode: "read",
-    operation: "compose_campaign_intent",
-    arguments: { composition_mode: "intent", goal: "Write a product update" },
-  }).operation_plan;
-  assert.equal(intent.decision, "ready");
-  assert.equal(intent.tool, "nitro_compose_campaign");
-  assert.deepEqual(intent.requests[0].body.params.arguments, {
-    composition_mode: "intent",
-    goal: "Write a product update",
-  });
+test("maps all composition surfaces to non-persisting reads", () => {
+  for (const [target_type, tool] of [
+    ["campaign", "nitro_compose_campaign"],
+    ["flow", "nitro_compose_flow"],
+    ["template", "nitro_manage_template"],
+  ]) {
+    const intent = prepareOperation({ mode: "read", operation: "compose_email", arguments: {
+      target_type, composition_mode: "intent",
+      arguments: { composition_mode: "draft", goal: `Write one ${target_type} email`, idempotency_key: "retry", dry_run: true },
+    } }).operation_plan;
+    assert.equal(intent.decision, "ready");
+    assert.equal(intent.tool, tool);
+    assert.deepEqual(intent.requests[0].body.params.arguments, {
+      goal: `Write one ${target_type} email`, composition_mode: "intent",
+    });
 
-  const validate = prepareOperation({
-    mode: "read",
-    operation: "validate_campaign_composition",
-    arguments: {
-      composition_mode: "validate",
-      contract_id: "ecc_fixture",
-      subject: "A careful update",
-      body: "We changed one detail because customers showed us where it hurt.",
-      idempotency_key: "ecr_fixture",
-    },
-  }).operation_plan;
-  assert.equal(validate.decision, "ready");
-  assert.equal(validate.tool, "nitro_compose_campaign");
-  assert.deepEqual(validate.requests[0].body.params.arguments, {
-    composition_mode: "validate",
-    contract_id: "ecc_fixture",
-    subject: "A careful update",
-    body: "We changed one detail because customers showed us where it hurt.",
-    validate_only: true,
-  });
+    const validation = prepareOperation({ mode: "read", operation: "compose_email", arguments: {
+      target_type, composition_mode: "validate",
+      arguments: { composition_mode: "draft", contract_id: `ecc_${target_type}`, idempotency_key: "retry", body: "Candidate" },
+    } }).operation_plan;
+    assert.equal(validation.decision, "ready");
+    assert.equal(validation.tool, tool);
+    assert.deepEqual(validation.requests[0].body.params.arguments, {
+      contract_id: `ecc_${target_type}`, body: "Candidate", composition_mode: "validate", validate_only: true,
+    });
+  }
 });
 
-test("refuses persistence and delivery fields on campaign composition reads", () => {
-  const cases = [
-    ["compose_campaign_intent", { composition_mode: "draft", goal: "No" }],
-    ["compose_campaign_intent", { composition_mode: "intent", goal: "No", idempotency_key: "ecr_forbidden" }],
-    ["compose_campaign_intent", { composition_mode: "intent", audience: { audience_type: "all_contacts" } }],
-    ["validate_campaign_composition", { composition_mode: "validate", contract_id: "ecc_fixture", body: "Hi", scheduled_at: "2026-08-01T00:00:00Z" }],
-    ["validate_campaign_composition", { composition_mode: "draft", contract_id: "ecc_fixture", body: "Hi" }],
-    ["validate_campaign_composition", { composition_mode: "validate", body: "Hi" }],
-  ];
-
-  for (const [operation, args] of cases) {
-    const plan = prepareOperation({ mode: "read", operation, arguments: args }).operation_plan;
-    assert.notEqual(plan.decision, "ready", `${operation} unexpectedly admitted ${JSON.stringify(args)}`);
+test("refuses malformed composition reads before transport", () => {
+  for (const arguments_ of [
+    { target_type: "message", composition_mode: "intent", arguments: { goal: "No" } },
+    { target_type: "campaign", composition_mode: "draft", arguments: { goal: "No" } },
+    { target_type: "campaign", composition_mode: "validate", arguments: { body: "Missing contract" } },
+    { target_type: "flow", composition_mode: "intent", arguments: { contract_id: "ecc_wrong" } },
+    { target_type: "template", composition_mode: "intent", arguments: [] },
+  ]) {
+    const plan = prepareOperation({ mode: "read", operation: "compose_email", arguments: arguments_ }).operation_plan;
+    assert.notEqual(plan.decision, "ready");
     assert.deepEqual(plan.requests, []);
+  }
+});
+
+test("admits only persistence-ready creative draft mutations", () => {
+  for (const [operation, tool] of [
+    ["compose_campaign", "nitro_compose_campaign"],
+    ["compose_flow", "nitro_compose_flow"],
+    ["manage_template", "nitro_manage_template"],
+  ]) {
+    const valid = { composition_mode: "draft", contract_id: `ecc_${operation}`, idempotency_key: `ecr_${operation}` };
+    const plan = prepareOperation({ mode: "act", operation, arguments: valid }).operation_plan;
+    assert.equal(plan.decision, "ready");
+    assert.equal(plan.tool, tool);
+    for (const invalid of [
+      { ...valid, composition_mode: "intent" },
+      { ...valid, composition_mode: "validate" },
+      { ...valid, composition_mode: "generate" },
+      { ...valid, contract_id: "" },
+      { ...valid, idempotency_key: "" },
+    ]) {
+      const refused = prepareOperation({ mode: "act", operation, arguments: invalid }).operation_plan;
+      assert.equal(refused.decision, "refused");
+      assert.deepEqual(refused.requests, []);
+    }
   }
 });
 
