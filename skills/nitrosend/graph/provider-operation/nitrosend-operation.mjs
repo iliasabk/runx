@@ -7,8 +7,7 @@ const READ_OPERATIONS = new Map([
   ["review_delivery", "nitro_review_delivery"],
   ["review_content", "nitro_review_delivery"],
   ["import_status", "nitro_query"],
-  ["compose_campaign_intent", "nitro_compose_campaign"],
-  ["validate_campaign_composition", "nitro_compose_campaign"],
+  ["compose_email", null],
   ["billing_status", "nitro_manage_billing"],
   ["billing_plans", "nitro_manage_billing"],
   ["plan_checkout_status", "nitro_manage_billing"],
@@ -24,6 +23,14 @@ const ACT_OPERATIONS = new Map([
   ["manage_template", "nitro_manage_template"],
   ["define_segment", "nitro_define_segment"],
   ["ingest_image", "nitro_ingest"],
+]);
+const COMPOSITION_TOOLS = new Map([
+  ["campaign", "nitro_compose_campaign"],
+  ["flow", "nitro_compose_flow"],
+  ["template", "nitro_manage_template"],
+]);
+const CREATIVE_DRAFT_OPERATIONS = new Set([
+  "compose_campaign", "compose_flow", "manage_template",
 ]);
 const BILLING_PROVIDER_OPERATIONS = new Map([
   ["billing_status", "status"],
@@ -69,7 +76,9 @@ export function prepareOperation(inputs) {
     : blockers.length > 0
       ? "needs_input"
       : "ready";
-  const tool = operations?.get(operation) ?? null;
+  const tool = operation === "compose_email"
+    ? COMPOSITION_TOOLS.get(text(args.target_type)) ?? null
+    : operations?.get(operation) ?? null;
   const requestId = `nitrosend-${operation || "unknown"}`;
   return {
     operation_plan: {
@@ -280,27 +289,31 @@ function validate(mode, operation, args, brandSid) {
   if (mode === "read" && operation === "import_status" && !positiveInteger(args.import_id)) {
     return ["import_status requires arguments.import_id"];
   }
-  if (mode === "read" && ["compose_campaign_intent", "validate_campaign_composition"].includes(operation)) {
-    const expectedMode = operation === "compose_campaign_intent" ? "intent" : "validate";
-    if (args.composition_mode !== expectedMode) {
-      return [`${operation} requires arguments.composition_mode=${expectedMode}`];
+  if (mode === "read" && operation === "compose_email") {
+    const allowed = new Set(["target_type", "composition_mode", "arguments"]);
+    const unexpected = Object.keys(args).filter((key) => !allowed.has(key));
+    if (unexpected.length > 0) {
+      return [`refused:compose_email received unsupported fields: ${unexpected.join(", ")}`];
     }
-    const forbidden = [
-      "audience", "scheduled_at", "confirm", "campaign_id", "mode",
-      "approval", "activate", "activation", "send", "operation",
-      ...(operation === "compose_campaign_intent" ? ["idempotency_key"] : []),
-    ].filter((key) => Object.hasOwn(args, key));
-    if (forbidden.length > 0) {
-      return [`refused:${operation} cannot receive stateful fields: ${forbidden.join(", ")}`];
+    if (!COMPOSITION_TOOLS.has(args.target_type)) {
+      return ["compose_email requires arguments.target_type campaign, flow, or template"];
     }
-    if (operation === "compose_campaign_intent" && args.contract_id !== undefined) {
-      return ["compose_campaign_intent must not receive arguments.contract_id"];
+    if (!["intent", "validate"].includes(args.composition_mode)) {
+      return ["compose_email requires arguments.composition_mode intent or validate"];
     }
-    if (operation === "validate_campaign_composition" && !text(args.contract_id)) {
-      return ["validate_campaign_composition requires arguments.contract_id"];
+    if (!isRecord(args.arguments)) {
+      return ["compose_email requires arguments.arguments as a JSON object"];
     }
-    if (operation === "validate_campaign_composition" && !text(args.body) && !Array.isArray(args.sections)) {
-      return ["validate_campaign_composition requires arguments.body or arguments.sections"];
+    if (args.composition_mode === "validate" && !text(args.arguments.contract_id)) {
+      return ["compose_email validation requires arguments.arguments.contract_id"];
+    }
+    if (args.composition_mode === "intent" && args.arguments.contract_id !== undefined) {
+      return ["compose_email intent must not receive arguments.arguments.contract_id"];
+    }
+  }
+  if (mode === "act" && CREATIVE_DRAFT_OPERATIONS.has(operation)) {
+    if (args.composition_mode !== "draft" || !text(args.contract_id) || !text(args.idempotency_key)) {
+      return [`refused:${operation} requires persistence-ready composition_mode=draft arguments with contract_id and idempotency_key`];
     }
   }
   if (mode === "act" && operation === "send_transactional") {
@@ -386,12 +399,17 @@ function providerArguments(operation, args) {
     };
   }
   if (operation === "sender_settings") return {};
-  if (operation === "compose_campaign_intent") {
-    return { ...args, composition_mode: "intent" };
-  }
-  if (operation === "validate_campaign_composition") {
-    const { idempotency_key: _idempotencyKey, ...validationArgs } = args;
-    return { ...validationArgs, composition_mode: "validate", validate_only: true };
+  if (operation === "compose_email") {
+    const compositionArguments = { ...record(args.arguments) };
+    delete compositionArguments.composition_mode;
+    delete compositionArguments.validate_only;
+    delete compositionArguments.dry_run;
+    delete compositionArguments.idempotency_key;
+    return {
+      ...compositionArguments,
+      composition_mode: args.composition_mode,
+      ...(args.composition_mode === "validate" ? { validate_only: true } : {}),
+    };
   }
   if (operation === "import_status") {
     return { entity: "imports", filters: { id: Number(args.import_id) }, page: 1, per: 1 };

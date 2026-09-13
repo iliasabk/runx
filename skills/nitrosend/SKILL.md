@@ -42,9 +42,9 @@ work. Those are product-operator concerns owned by the Nitrosend repository.
 - `plan-campaign`, `plan-flow`, `plan-transactional`, and `plan-import`:
   bounded agent judgment that produces a reviewable request without provider
   completion.
-- `compose-email`: read the live Nitrosend authoring contract, let one bounded
-  agent author its exact next call, and return authoritative MCP validation.
-  It never persists a draft or gains delivery authority.
+- `compose-email`: make one approval-free intent or validation call for a
+  campaign, flow, or reusable template and return authoritative provider
+  evidence. It never persists a draft or gains delivery authority.
 - `apply-draft`: apply exact reviewed arguments for a campaign, flow, template,
   segment, or remote image ingest. Image ingest validates the remote bytes and
   returns a durable Nitro-hosted brand-library URL. It never sends or activates.
@@ -67,6 +67,30 @@ Use the current public `https://nitrosend.com/SKILL.md`, `nitro_get_status`, and
 the live MCP schema as product truth. Do not copy onboarding or tool schemas
 into another repo-local skill.
 
+## Email composition
+
+`compose-email` is one two-turn, non-persisting boundary for all three creative
+surfaces. Choose `target_type=campaign`, `flow`, or `template`.
+
+1. Call it with `composition_mode=intent` and the surface-specific goal and
+   context under `arguments`. Nitrosend returns a frozen contract and exact next
+   call without creating an account entity.
+2. The host writes the candidate from that contract. No internal agent runner
+   or fallback reconstructs omitted brand, memory, source, or schema context.
+3. Call `compose-email` again with `composition_mode=validate` and the candidate
+   arguments. The runner forces the provider's validation mode and removes
+   persistence-only retry fields from this read.
+4. When the provider accepts the candidate and the operator wants it saved,
+   pass the provider-issued draft call to `apply-draft`. That is the first
+   persistence boundary and keeps its existing human approval.
+
+Every intent and validation outcome returns the same
+`nitrosend.provider_evidence.v1` packet, including `needs_input`, refusal, and
+provider errors. A stopped composition is therefore a usable result with exact
+repair guidance, never a successful graph with no result producer. Validation
+proves only that the candidate currently satisfies the provider contract; it
+does not create, approve, test, schedule, activate, or send anything.
+
 ## Safe operating sequence
 
 1. Run `status` and stop on sender, domain, suspension, warmup, or account
@@ -78,11 +102,15 @@ into another repo-local skill.
    brand before approval and independently reads it again after mutation.
    A missing brand SID, different readback brand, or changed field stops the
    operation; never fall back to an account default.
-3. For email authoring, use `compose-email` so Nitrosend supplies current brand
-   and memory context before the model writes. Treat its MCP validation as
-   authoritative; repair in another bounded turn when requested. For other
-   planning, use the matching planning runner.
-4. Apply only validated arguments through `apply-draft`; that separate runner
+3. For email authoring, use `compose-email` with `composition_mode=intent`
+   so Nitrosend supplies current brand and memory context before the host
+   writes. Call the same runner with `composition_mode=validate` and the
+   contract-bound candidate. Treat its provider result as authoritative and
+   repair against the same contract when requested. For other planning, use
+   the matching planning runner.
+4. Apply only the provider-issued persistence arguments through `apply-draft`;
+   creative operations must carry `composition_mode=draft`, the exact
+   `contract_id`, and a stable `idempotency_key`. That separate runner
    retains the approval gate and is the first persistence boundary. For a new
    vendor-site or free-stock image, use `operation=ingest_image` with its exact
    public URL and an honest description, then reissue the composition intent so
@@ -151,10 +179,9 @@ rather than keeping a resident polling loop.
 ## Agent task contracts
 
 The planning acts prepare exact downstream operations and never call the
-provider. `compose-email-from-contract` is different: the enclosing graph has
-already read authoritative MCP intent evidence, and the agent only authors a
-candidate for the graph's read-only MCP validation. No agent act persists or
-delivers.
+provider. `compose-email` contains no agent act: the host writes from the
+provider-issued contract between its explicit intent and validation calls. No
+composition call persists or delivers.
 
 The internal provider boundary emits `nitrosend.provider_evidence.v1` for both
 successful and stopped operations. Consumers carry that packet unchanged;
@@ -182,22 +209,6 @@ Plan exactly one email or SMS to one named recipient. Require channel-specific
 content, a stable idempotency key, dry-run validation, and confirmation before a
 real send. Reject audience or list broadcasts and route those to
 `send-campaign`.
-
-### `compose-email-from-contract`
-
-Read the `composition_intent` provider evidence supplied as the declared input
-or current graph context. It must contain a successful Nitrosend result with a
-composition contract, contract id, and next call. Return `campaign_candidate`
-with `decision` (`ready`, `needs_input`, or `reject`), exact `arguments`,
-`rationale`, and `blockers`.
-
-For `ready`, begin from the contract's `next_call`, preserve its `contract_id`,
-set `composition_mode` to `validate`, and fill only the requested creative
-fields. Follow the supplied brand, memory, examples, hard constraints, design
-mode, and repair guidance. Never reconstruct omitted context, invent claims,
-add an audience or schedule, or request draft, approval, activation, testing,
-or sending. If the intent evidence or required contract fields are missing,
-return `needs_input` without fabricated arguments.
 
 ### `import-contacts-plan`
 
