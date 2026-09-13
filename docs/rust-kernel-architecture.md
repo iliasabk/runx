@@ -578,13 +578,11 @@ present them as canonical.
 
 The one-to-one CLI matrix belongs in `fixtures/cli-parity/` and is governed by
 the `rust-cli-feature-parity-matrix` spec. The matrix is intentionally broader
-than kernel parity. It includes `skill`, `resume`, `replay`, `diff`,
-`search`, `add`, `inspect`, `history`, `knowledge show`,
-`connect`, `config`, `new`, `init`, `harness`, `list`, `doctor`, `dev`,
-`mcp serve`, `tool search`, `tool inspect`, and `tool build`, plus any
-pre-existing aliases that the matrix explicitly preserves and JSON/non-JSON
-modes. Payment surfaces use clean v1 names only. `spend` is the canonical buyer
-contract; `charge`,
+than kernel parity. It derives its command inventory from native CLI help and
+binds each advertised command to an explicit parity annotation and executable
+case. Do not maintain a second handwritten command inventory here. Payment
+surfaces use clean v1 names only. `spend` is the canonical buyer contract;
+`charge`,
 `refund`, and `settle-invoice` are the other canonical contracts, while
 `x402-pay` and `stripe-pay` are discoverable hosted facades. Their OSS graphs
 use the generic provider mutation/readback boundary. Quote, reservation, rail
