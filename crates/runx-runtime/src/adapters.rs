@@ -1,3 +1,6 @@
+#[cfg(any(feature = "a2a", feature = "mcp"))]
+mod argument_template;
+
 #[cfg(feature = "cli-tool")]
 pub mod cli_tool;
 

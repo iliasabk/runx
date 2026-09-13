@@ -3,13 +3,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadRustCliPlatforms, rustCliPlatformForKey } from "./rust-cli-topology.mjs";
+
 const workspaceRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
-const topology = JSON.parse(
-  readFileSync(path.join(workspaceRoot, "packages", "cli", "native", "supported-platforms.json"), "utf8"),
-);
-if (topology.schema !== "runx.rust_cli_selector_topology.v1") {
-  throw new Error("release platform topology has an unsupported schema");
-}
 const commands = [
   "cargo test --locked -p runx-js-worker",
   "cargo test --locked -p runx-runtime --test integration 'javascript_worker::' -- --nocapture",
@@ -17,10 +13,7 @@ const commands = [
 ];
 
 const options = parseArgs(process.argv.slice(2));
-const release = topology.nativePackages?.[options.platform];
-if (!release) {
-  throw new Error(`unsupported platform: ${options.platform}`);
-}
+const release = rustCliPlatformForKey(loadRustCliPlatforms(workspaceRoot), options.platform);
 if (options.target !== release.rustTarget) {
   throw new Error(`release target mismatch for ${options.platform}: expected ${release.rustTarget}`);
 }

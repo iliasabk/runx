@@ -19,6 +19,56 @@ pub(crate) struct ReceiptServices {
     signature_config: RuntimeReceiptSignatureConfig,
 }
 
+pub(crate) struct ReceiptReadContext {
+    store: LocalReceiptStore,
+    resolved: ResolvedReceiptPath,
+    verifier: Option<Ed25519ReceiptVerifier>,
+}
+
+impl ReceiptReadContext {
+    pub(crate) fn resolve(
+        env: &BTreeMap<String, String>,
+        cwd: &Path,
+    ) -> Result<Self, RuntimeError> {
+        let verifier = production_receipt_verifier(env)?;
+        let resolved = resolve_receipt_path(ReceiptPathInputs {
+            explicit_dir: None,
+            runtime_config: Some(&RuntimeReceiptConfig::default()),
+            env,
+            cwd,
+        });
+        let store = LocalReceiptStore::new(&resolved.path);
+        Ok(Self {
+            store,
+            resolved,
+            verifier,
+        })
+    }
+
+    pub(crate) const fn store(&self) -> &LocalReceiptStore {
+        &self.store
+    }
+
+    pub(crate) const fn resolved(&self) -> &ResolvedReceiptPath {
+        &self.resolved
+    }
+
+    pub(crate) const fn signature_mode(&self) -> &'static str {
+        if self.verifier.is_some() {
+            "production"
+        } else {
+            "local-development"
+        }
+    }
+
+    pub(crate) fn signature_policy(&self) -> crate::receipts::RuntimeReceiptSignaturePolicy<'_> {
+        self.verifier.as_ref().map_or_else(
+            crate::receipts::RuntimeReceiptSignaturePolicy::local_development,
+            |verifier| crate::receipts::RuntimeReceiptSignaturePolicy::production(verifier),
+        )
+    }
+}
+
 impl ReceiptServices {
     pub(crate) fn from_env(
         env: &BTreeMap<String, String>,
@@ -103,7 +153,7 @@ impl ReceiptServices {
     }
 }
 
-pub(crate) fn production_receipt_verifier(
+fn production_receipt_verifier(
     env: &BTreeMap<String, String>,
 ) -> Result<Option<Ed25519ReceiptVerifier>, RuntimeError> {
     receipt_verifier_from_env(env)

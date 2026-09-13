@@ -10,6 +10,7 @@ use runx_contracts::{JsonObject, JsonValue, sha256_hex};
 use crate::RuntimeError;
 use crate::adapter::{InvocationOutput, InvocationStatus, SkillAdapter, SkillInvocation};
 use crate::adapter_pipeline::AdapterProjection;
+use crate::adapters::argument_template::map_argument_template;
 
 const DEFAULT_POLL_INTERVAL: Duration = Duration::from_millis(10);
 const MIN_TIMEOUT: Duration = Duration::from_millis(50);
@@ -174,10 +175,11 @@ where
         };
 
         let timeout = timeout_from_source(source.timeout_seconds);
-        let message = map_arguments(
+        let message = map_argument_template(
             source.arguments.as_ref(),
             &request.inputs,
             &request.resolved_inputs,
+            "serializing A2A template input",
         )?;
         let submitted = match self.transport.send_message(A2aSendMessageRequest {
             agent_card_url: agent_card_url.clone(),
@@ -367,83 +369,6 @@ fn timeout_from_source(timeout_seconds: Option<u64>) -> Duration {
         .map(Duration::from_secs)
         .unwrap_or(DEFAULT_TIMEOUT)
         .max(MIN_TIMEOUT)
-}
-
-fn map_arguments(
-    argument_template: Option<&JsonObject>,
-    inputs: &JsonObject,
-    resolved_inputs: &JsonObject,
-) -> Result<JsonObject, RuntimeError> {
-    let Some(template) = argument_template else {
-        let mut merged = inputs.clone();
-        merged.extend(resolved_inputs.clone());
-        return Ok(merged);
-    };
-    template
-        .iter()
-        .map(|(key, value)| {
-            let mapped = match value {
-                JsonValue::String(template) => {
-                    map_template_string(template, inputs, resolved_inputs)?
-                }
-                other => other.clone(),
-            };
-            Ok((key.clone(), mapped))
-        })
-        .collect()
-}
-
-// Exact and embedded templates share one delimiter-aware mapping path.
-fn map_template_string(
-    template: &str,
-    inputs: &JsonObject,
-    resolved_inputs: &JsonObject,
-) -> Result<JsonValue, RuntimeError> {
-    if let Some(key) = exact_template_key(template) {
-        return Ok(resolved_inputs
-            .get(key)
-            .or_else(|| inputs.get(key))
-            .cloned()
-            .unwrap_or(JsonValue::Null));
-    }
-
-    let mut rendered = String::new();
-    let mut rest = template;
-    while let Some(start) = rest.find("{{") {
-        let (prefix, after_start) = rest.split_at(start);
-        rendered.push_str(prefix);
-        let after_start = &after_start[2..];
-        let Some(end) = after_start.find("}}") else {
-            rendered.push_str("{{");
-            rendered.push_str(after_start);
-            return Ok(JsonValue::String(rendered));
-        };
-        let key = after_start[..end].trim();
-        rendered.push_str(&stringify_input(
-            resolved_inputs.get(key).or_else(|| inputs.get(key)),
-        )?);
-        rest = &after_start[end + 2..];
-    }
-    rendered.push_str(rest);
-    Ok(JsonValue::String(rendered))
-}
-
-fn exact_template_key(template: &str) -> Option<&str> {
-    let trimmed = template.trim();
-    let inner = trimmed.strip_prefix("{{")?.strip_suffix("}}")?.trim();
-    if inner.is_empty() || inner.contains(char::is_whitespace) {
-        return None;
-    }
-    Some(inner)
-}
-
-fn stringify_input(value: Option<&JsonValue>) -> Result<String, RuntimeError> {
-    match value {
-        None | Some(JsonValue::Null) => Ok(String::new()),
-        Some(JsonValue::String(value)) => Ok(value.clone()),
-        Some(value) => serde_json::to_string(value)
-            .map_err(|source| RuntimeError::json("serializing A2A template input", source)),
-    }
 }
 
 // Function rationale: A2A metadata construction keeps

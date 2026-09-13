@@ -1,8 +1,9 @@
-import { execFileSync } from "node:child_process";
-import { access, lstat, mkdir, readlink, realpath, rm, symlink } from "node:fs/promises";
+import { access, mkdir, realpath, rm, symlink } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { describeSymbolicLink, resolveGlobalNpmPrefix } from "./global-npm-prefix.mjs";
 
 const workspaceRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const nativeBinary = path.join(workspaceRoot, "crates", "target", "debug", process.platform === "win32" ? "runx.exe" : "runx");
@@ -13,21 +14,7 @@ const workerBinary = path.join(
   "debug",
   process.platform === "win32" ? "runx-js-worker.exe" : "runx-js-worker",
 );
-const globalPrefix = execFileSync("npm", ["prefix", "-g"], {
-  cwd: workspaceRoot,
-  encoding: "utf8",
-  env: Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => !key.startsWith("npm_config_") && !key.startsWith("npm_package_")),
-  ),
-}).trim();
-
-if (!path.isAbsolute(globalPrefix)) {
-  throw new Error(`npm prefix -g returned a non-absolute path: ${globalPrefix}`);
-}
-
-if (globalPrefix === workspaceRoot || globalPrefix.startsWith(`${workspaceRoot}${path.sep}`)) {
-  throw new Error(`refusing to link into workspace-local prefix ${globalPrefix}; check your global npm prefix configuration`);
-}
+const globalPrefix = resolveGlobalNpmPrefix(workspaceRoot);
 
 const globalBinDir = path.join(globalPrefix, "bin");
 const globalBinLink = path.join(globalBinDir, process.platform === "win32" ? "runx.exe" : "runx");
@@ -42,7 +29,7 @@ if (mode === "unlink") {
 
 if (mode === "check") {
   process.stdout.write(
-    ["runx dev-native link status", `prefix   ${globalPrefix}`, `binary   ${await describeLink(globalBinLink)}`].join(
+    ["runx dev-native link status", `prefix   ${globalPrefix}`, `binary   ${await describeSymbolicLink(globalBinLink)}`].join(
       "\n",
     ) + "\n",
   );
@@ -74,17 +61,3 @@ process.stdout.write(
     "This links `runx` directly to crates/target/debug/runx for workspace dogfood. Re-run after clean builds if the target directory changes.",
   ].join("\n") + "\n",
 );
-
-async function describeLink(filePath) {
-  try {
-    const stats = await lstat(filePath);
-    if (stats.isSymbolicLink()) {
-      const target = await readlink(filePath);
-      const resolved = await realpath(filePath);
-      return `${filePath} -> ${target} (${resolved})`;
-    }
-    return `${filePath} exists but is not a symlink`;
-  } catch {
-    return `${filePath} missing`;
-  }
-}

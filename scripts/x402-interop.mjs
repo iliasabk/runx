@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+
+import { inspectGitCheckout, optionValue, writeJson } from "./lib/x402-conformance.mjs";
 
 const TARGETS = new Set(["x402-rs", "cdp"]);
 const DEFAULT_X402_RS_DIR = "/tmp/x402-rs";
@@ -25,7 +27,7 @@ if (args.includes("--help") || args.includes("-h")) {
   usage(0);
 }
 
-const target = option("--target") || process.env.RUNX_X402_INTEROP_TARGET || "x402-rs";
+const target = optionValue(args, "--target") || process.env.RUNX_X402_INTEROP_TARGET || "x402-rs";
 if (!TARGETS.has(target)) {
   fail(`unsupported target '${target}'. Expected one of: ${Array.from(TARGETS).join(", ")}`);
 }
@@ -34,12 +36,12 @@ const mode = args.includes("--run") ? "run" : "check";
 const report = target === "x402-rs" ? x402RsReport(mode) : cdpReport(mode);
 
 if (mode === "check") {
-  write(report);
+  writeJson(report);
   process.exit(report.target_available === false ? 1 : 0);
 }
 
 if (target === "cdp") {
-  write(report);
+  writeJson(report);
   fail("CDP hosted-facilitator live run is not implemented; use --check for the no-secret preflight report");
 }
 
@@ -48,12 +50,12 @@ if (target === "x402-rs") {
 }
 
 function x402RsReport(selectedMode) {
-  const repoDir = option("--repo-dir") || process.env.X402_RS_DIR || DEFAULT_X402_RS_DIR;
+  const repoDir = optionValue(args, "--repo-dir") || process.env.X402_RS_DIR || DEFAULT_X402_RS_DIR;
   const artifactDir =
-    option("--artifact-dir") || process.env.RUNX_X402_INTEROP_ARTIFACT_DIR || path.join(os.tmpdir(), "runx-x402-rs-interop");
-  const testFile = option("--test") || process.env.RUNX_X402_RS_TEST || DEFAULT_X402_RS_TEST;
+    optionValue(args, "--artifact-dir") || process.env.RUNX_X402_INTEROP_ARTIFACT_DIR || path.join(os.tmpdir(), "runx-x402-rs-interop");
+  const testFile = optionValue(args, "--test") || process.env.RUNX_X402_RS_TEST || DEFAULT_X402_RS_TEST;
   const complianceDir = path.join(repoDir, "protocol-compliance");
-  const upstream = inspectGitRepo(repoDir, path.join(complianceDir, "package.json"));
+  const upstream = inspectGitCheckout(repoDir, path.join(complianceDir, "package.json"));
   const missingEnv = X402_RS_REQUIRED_ENV.filter((name) => !process.env[name]);
   const commands = [
     ["pnpm", "--dir", complianceDir, "install", "--frozen-lockfile"],
@@ -116,11 +118,11 @@ function cdpReport(selectedMode) {
 
 function runX402Rs(report) {
   if (!report.target_available) {
-    write(report);
+    writeJson(report);
     fail(`x402-rs checkout not found at ${report.target_dir}`);
   }
   if (report.missing_env.length > 0) {
-    write(report);
+    writeJson(report);
     fail(`missing required environment variables: ${report.missing_env.join(", ")}`);
   }
 
@@ -137,34 +139,6 @@ function runX402Rs(report) {
       process.exit(result.status ?? 1);
     }
   }
-}
-
-function inspectGitRepo(dir, requiredFile) {
-  if (!existsSync(requiredFile)) {
-    return { available: false, sha: null };
-  }
-  const result = spawnSync("git", ["-C", dir, "rev-parse", "HEAD"], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  return {
-    available: result.status === 0,
-    sha: result.status === 0 ? result.stdout.trim() : null,
-  };
-}
-
-function option(name) {
-  const index = args.indexOf(name);
-  if (index !== -1) {
-    return args[index + 1];
-  }
-  const prefix = `${name}=`;
-  const inline = args.find((arg) => arg.startsWith(prefix));
-  return inline ? inline.slice(prefix.length) : undefined;
-}
-
-function write(value) {
-  process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 }
 
 function fail(message) {

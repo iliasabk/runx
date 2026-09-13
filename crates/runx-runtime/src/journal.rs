@@ -12,6 +12,7 @@ use runx_contracts::schema::NonEmptyString;
 use runx_contracts::{
     ClosureDisposition, ExecutionEvent, Receipt, ReferenceType, canonical_stable_json, sha256_hex,
 };
+use runx_core::policy::parse_rfc3339_moment;
 use runx_receipts::{
     ReceiptFindingCode, ReceiptProofContextProvider, signed_display_identity, verify_receipt_proof,
 };
@@ -818,127 +819,13 @@ struct Timestamp {
 
 impl Timestamp {
     fn parse(value: &str) -> Option<Self> {
-        let (date, time_and_zone) = value.split_once('T')?;
-        let (year, month, day) = parse_date(date)?;
-        let (time, offset_seconds) = parse_time_and_offset(time_and_zone)?;
-        let (hour, minute, second, nanos) = parse_time(time)?;
-        let days = days_from_civil(year, month, day)?;
-        let local_seconds = days
-            .checked_mul(86_400)?
-            .checked_add(i64::from(hour) * 3_600)?
-            .checked_add(i64::from(minute) * 60)?
-            .checked_add(i64::from(second))?;
+        let (days, seconds_of_day, nanos) = parse_rfc3339_moment(value)?;
+        let epoch_seconds = days.checked_mul(86_400)?.checked_add(seconds_of_day)?;
         Some(Self {
-            epoch_seconds: local_seconds.checked_sub(i64::from(offset_seconds))?,
+            epoch_seconds,
             nanos,
         })
     }
-}
-
-fn parse_date(value: &str) -> Option<(i32, u32, u32)> {
-    let mut parts = value.split('-');
-    let year = parse_i32(parts.next()?)?;
-    let month = parse_u32(parts.next()?)?;
-    let day = parse_u32(parts.next()?)?;
-    if parts.next().is_some()
-        || !(1..=12).contains(&month)
-        || day == 0
-        || day > days_in_month(year, month)
-    {
-        return None;
-    }
-    Some((year, month, day))
-}
-
-fn parse_time_and_offset(value: &str) -> Option<(&str, i32)> {
-    if let Some(time) = value.strip_suffix('Z') {
-        return Some((time, 0));
-    }
-    let offset_index = value
-        .char_indices()
-        .skip(1)
-        .find_map(|(index, character)| matches!(character, '+' | '-').then_some(index))?;
-    let time = &value[..offset_index];
-    let offset = &value[offset_index..];
-    let sign = if offset.starts_with('+') { 1 } else { -1 };
-    let mut parts = offset[1..].split(':');
-    let hours = parse_i32(parts.next()?)?;
-    let minutes = parse_i32(parts.next()?)?;
-    if parts.next().is_some() || !(0..=23).contains(&hours) || !(0..=59).contains(&minutes) {
-        return None;
-    }
-    Some((time, sign * ((hours * 3_600) + (minutes * 60))))
-}
-
-fn parse_time(value: &str) -> Option<(u32, u32, u32, u32)> {
-    let mut parts = value.split(':');
-    let hour = parse_u32(parts.next()?)?;
-    let minute = parse_u32(parts.next()?)?;
-    let seconds = parts.next()?;
-    if parts.next().is_some() {
-        return None;
-    }
-    let (second_text, fraction) = seconds.split_once('.').unwrap_or((seconds, ""));
-    let second = parse_u32(second_text)?;
-    if hour > 23 || minute > 59 || second > 60 {
-        return None;
-    }
-    Some((hour, minute, second, parse_nanos(fraction)?))
-}
-
-fn parse_nanos(value: &str) -> Option<u32> {
-    if value.is_empty() {
-        return Some(0);
-    }
-    if value.len() > 9 || !value.chars().all(|character| character.is_ascii_digit()) {
-        return None;
-    }
-    let mut nanos = parse_u32(value)?;
-    for _ in value.len()..9 {
-        nanos = nanos.checked_mul(10)?;
-    }
-    Some(nanos)
-}
-
-fn parse_i32(value: &str) -> Option<i32> {
-    if value.is_empty() {
-        return None;
-    }
-    value.parse().ok()
-}
-
-fn parse_u32(value: &str) -> Option<u32> {
-    if value.is_empty() || !value.chars().all(|character| character.is_ascii_digit()) {
-        return None;
-    }
-    value.parse().ok()
-}
-
-fn days_in_month(year: i32, month: u32) -> u32 {
-    match month {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 if is_leap_year(year) => 29,
-        2 => 28,
-        _ => 0,
-    }
-}
-
-fn is_leap_year(year: i32) -> bool {
-    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
-}
-
-fn days_from_civil(year: i32, month: u32, day: u32) -> Option<i64> {
-    let year = i64::from(year) - i64::from((month <= 2) as i32);
-    let era = if year >= 0 { year } else { year - 399 } / 400;
-    let year_of_era = year - era * 400;
-    let month = i64::from(month);
-    let day = i64::from(day);
-    let day_of_year = (153 * (month + if month > 2 { -3 } else { 9 }) + 2) / 5 + day - 1;
-    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
-    era.checked_mul(146_097)?
-        .checked_add(day_of_era)?
-        .checked_sub(719_468)
 }
 
 fn list_paused_runs(

@@ -5,9 +5,8 @@ use runx_contracts::{JsonObject, JsonValue};
 
 use crate::journal::project_receipt_inspection_with_policy;
 use crate::receipts::RuntimeReceiptSignaturePolicy;
-use crate::receipts::paths::{ReceiptPathInputs, RuntimeReceiptConfig, resolve_receipt_path};
 use crate::receipts::store::LocalReceiptStore;
-use crate::services::receipts::production_receipt_verifier;
+use crate::services::ReceiptReadContext;
 use crate::{ReceiptTreeConfig, RuntimeError, verify_runtime_receipt_tree_with_policy};
 
 mod projection;
@@ -88,27 +87,24 @@ pub(crate) fn prove_receipts(
     env: &BTreeMap<String, String>,
     cwd: &Path,
 ) -> Result<JsonObject, RuntimeError> {
+    let context = ReceiptReadContext::resolve(env, cwd)?;
+    prove_receipts_with_context(receipt_ids, &context)
+}
+
+pub(crate) fn prove_receipts_with_context(
+    receipt_ids: &[String],
+    context: &ReceiptReadContext,
+) -> Result<JsonObject, RuntimeError> {
     let receipt_ids = validate_receipt_ids(receipt_ids)?;
-    let verifier = production_receipt_verifier(env)?;
-    let signature_mode = if verifier.is_some() {
-        "production"
-    } else {
-        "local-development"
-    };
-    let policy = verifier.as_ref().map_or_else(
-        RuntimeReceiptSignaturePolicy::local_development,
-        |verifier| RuntimeReceiptSignaturePolicy::production(verifier),
-    );
-    let resolved = resolve_receipt_path(ReceiptPathInputs {
-        explicit_dir: None,
-        runtime_config: Some(&RuntimeReceiptConfig::default()),
-        env,
-        cwd,
-    });
-    let store = LocalReceiptStore::new(&resolved.path);
+    let resolved = context.resolved();
     let mut projection = ProofProjection::new();
     for receipt_id in &receipt_ids {
-        projection.inspect(receipt_id, &store, &resolved.label, policy)?;
+        projection.inspect(
+            receipt_id,
+            context.store(),
+            &resolved.label,
+            context.signature_policy(),
+        )?;
     }
 
     let complete = projection.matched.len() == receipt_ids.len();
@@ -116,7 +112,7 @@ pub(crate) fn prove_receipts(
     Ok(proof_packet(
         receipt_ids,
         projection,
-        signature_mode,
+        context.signature_mode(),
         resolved.label.as_str(),
         complete,
         trees_valid,
