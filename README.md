@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="license: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-111111?style=flat-square"></a>
-  <a href="https://www.npmjs.com/package/@runxhq/cli"><img alt="npm @runxhq/cli" src="https://img.shields.io/npm/v/@runxhq/cli?style=flat-square&color=cb3837&label=%40runxhq%2Fcli"></a>
+  <a href="https://www.npmjs.com/package/@runxhq/cli"><img alt="npm @runxhq/cli" src="https://img.shields.io/npm/v/@runxhq/cli?style=flat-square&color=f97316&label=%40runxhq%2Fcli"></a>
   <a href="https://github.com/runxhq/runx/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/runxhq/runx/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://runx.ai/x"><img alt="catalog" src="https://img.shields.io/badge/catalog-runx.ai%2Fx-ff2e88?style=flat-square"></a>
   <a href="https://runx.ai/spec"><img alt="spec" src="https://img.shields.io/badge/spec-read-7c5cff?style=flat-square"></a>
