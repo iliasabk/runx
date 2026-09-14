@@ -54,15 +54,15 @@ const SOURCES: &[(&str, &str)] = &[
     ),
     (
         "typescript/packages/core/src/types/facilitator.ts",
-        "sha256:fc114c599efcb19e317128439ee67b88d016d98050806d64da9e575d1760f3c0",
+        "sha256:2aff6bbf3e9e8a1b354b210b0635ee56a49184667e5391bdc002d4d58150387f",
     ),
     (
         "typescript/packages/core/src/http/index.ts",
-        "sha256:9c486f945a0585674bf748ebc654168eab6555b20dab4bf0a34d052798e2e944",
+        "sha256:b111b21ae7cf1e7f34f088a580434480188c70a47b93e3f87f45d03747c326ed",
     ),
     (
         "specs/x402-specification-v2.md",
-        "sha256:7d9be66cbcf51d3593e17ac51a623395f8ccb86fd3d76a27919419e4ce83efef",
+        "sha256:cb66bdef710298233316b02d48fce4a9417ec5449ed9cab7f5d9fe6a454920cd",
     ),
     (
         "specs/transports-v2/http.md",

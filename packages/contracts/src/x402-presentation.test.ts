@@ -54,6 +54,9 @@ interface X402Fixture {
 }
 
 const fixtureRoot = new URL("../../../fixtures/contracts/x402-v2/", import.meta.url);
+const upstreamPin = JSON.parse(
+  readFileSync(new URL("upstream-pin.json", fixtureRoot), "utf8"),
+) as { readonly package: { readonly name: string; readonly version: string }; readonly revision: string };
 
 function fixture(file: string): X402Fixture {
   return JSON.parse(readFileSync(new URL(file, fixtureRoot), "utf8")) as X402Fixture;
@@ -83,9 +86,9 @@ describe("x402 v2 TypeScript facade", () => {
       expect(schema).toBe(runxGeneratedSchemaArtifacts[file]);
       expect(schema.$id).toBe(id);
     }
-    expect(X402_UPSTREAM_PACKAGE).toBe("@x402/core");
-    expect(X402_UPSTREAM_PACKAGE_VERSION).toBe("2.23.0");
-    expect(X402_UPSTREAM_COMMIT).toHaveLength(40);
+    expect(X402_UPSTREAM_PACKAGE).toBe(upstreamPin.package.name);
+    expect(X402_UPSTREAM_PACKAGE_VERSION).toBe(upstreamPin.package.version);
+    expect(X402_UPSTREAM_COMMIT).toBe(upstreamPin.revision);
   });
 
   it("round-trips the pinned official HTTP headers byte for byte", () => {

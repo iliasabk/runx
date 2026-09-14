@@ -34,6 +34,11 @@ const requiredCandidateClasses = new Set([
   "native_quickjs_worker",
   "no_wasi_javascript_on_wasm",
 ]);
+const workerManifest = readFileSync(
+  path.join(workspaceRoot, "crates", "runx-js-worker", "Cargo.toml"),
+  "utf8",
+);
+const boaVersion = workerManifest.match(/^boa_engine\s*=\s*\{\s*version\s*=\s*"=([^"]+)"/mu)?.[1];
 
 exactKeys(document, [
   "schema",
@@ -50,6 +55,12 @@ checkRequirements(document.requirements);
 checkProbe(document.probe, document.candidates);
 checkCandidates(document.candidates);
 checkDecision(document.decision, document.candidates);
+expect(Boolean(boaVersion), "runx-js-worker must exactly pin boa_engine");
+expect(
+  document.decision?.selected_engine !== "boa_native"
+    || document.decision?.selected_version === `boa_engine ${boaVersion}`,
+  "decision.selected_version must match runx-js-worker's exact boa_engine pin",
+);
 checkDigest(document);
 
 if (findings.length > 0) {

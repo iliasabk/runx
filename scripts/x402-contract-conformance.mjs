@@ -15,19 +15,18 @@ import {
   decodePaymentSignatureHeader,
 } from "@x402/core/http";
 
-const EXPECTED_COMMIT = "230e6a9a7eebce22c911a0687d6f4e6d1ac019f7";
 const EXPECTED_PACKAGE = "@x402/core";
-const EXPECTED_PACKAGE_VERSION = "2.23.0";
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const fixtureRoot = path.join(root, "fixtures", "contracts", "x402-v2");
 
 const pin = await jsonFile(path.join(fixtureRoot, "upstream-pin.json"));
 const installedPackage = await jsonFile(path.join(root, "node_modules", "@x402", "core", "package.json"));
-assert(pin.revision === EXPECTED_COMMIT, "upstream commit pin drifted");
+assert(/^([0-9a-f]{40})$/u.test(pin.revision), "upstream commit pin is malformed");
+assert(pin.repository === "https://github.com/x402-foundation/x402", "upstream repository pin drifted");
 assert(pin.package?.name === EXPECTED_PACKAGE, "upstream package name drifted");
-assert(pin.package?.version === EXPECTED_PACKAGE_VERSION, "upstream package version pin drifted");
+assert(/^\d+\.\d+\.\d+$/u.test(pin.package?.version ?? ""), "upstream package version pin is malformed");
 assert(installedPackage.name === EXPECTED_PACKAGE, "installed upstream package name drifted");
-assert(installedPackage.version === EXPECTED_PACKAGE_VERSION, "installed upstream package version drifted");
+assert(installedPackage.version === pin.package.version, "installed upstream package version drifted");
 assert(
   pin.source_verification?.mode === "pinned_checkout_sha256",
   "upstream source verification mode drifted",
@@ -63,7 +62,7 @@ await validateOfficialVector({
 });
 
 process.stdout.write(
-  `x402 contract conformance passed (${EXPECTED_PACKAGE}@${EXPECTED_PACKAGE_VERSION}, ${EXPECTED_COMMIT})\n`,
+  `x402 contract conformance passed (${EXPECTED_PACKAGE}@${pin.package.version}, ${pin.revision})\n`,
 );
 
 async function validateOfficialVector({ file, parse, decode }) {

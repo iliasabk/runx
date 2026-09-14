@@ -11,9 +11,9 @@ import { inspectGitCheckout, optionValue, writeJson } from "./lib/x402-conforman
 
 const DEFAULT_UPSTREAM_DIR = "/tmp/x402-upstream";
 const DEFAULT_ENDPOINT = "/exact/evm/eip3009";
-const EXPECTED_UPSTREAM_SHA = "230e6a9a7eebce22c911a0687d6f4e6d1ac019f7";
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePin = readJson(path.join(repositoryRoot, "fixtures", "contracts", "x402-v2", "upstream-pin.json"));
+const expectedUpstreamSha = sourcePin.revision;
 const REQUIRED_ENV = [
   "SERVER_EVM_ADDRESS",
   "CLIENT_EVM_PRIVATE_KEY",
@@ -41,14 +41,14 @@ const upstream = inspectGitCheckout(upstreamDir, path.join(e2eDir, "package.json
 const sourceVerification = inspectSourcePins(upstreamDir, sourcePin.sources);
 const missingEnv = REQUIRED_ENV.filter((name) => !process.env[name]);
 const command = buildCommand({ e2eDir, artifactDir, endpoint });
-const pinMatches = upstream.sha === EXPECTED_UPSTREAM_SHA;
+const pinMatches = /^[0-9a-f]{40}$/u.test(expectedUpstreamSha) && upstream.sha === expectedUpstreamSha;
 const report = {
   schema: "runx.x402.upstream_conformance.v1",
   mode,
   upstream_dir: upstreamDir,
   upstream_available: upstream.available,
   upstream_sha: upstream.sha,
-  expected_upstream_sha: EXPECTED_UPSTREAM_SHA,
+  expected_upstream_sha: expectedUpstreamSha,
   pin_matches: pinMatches,
   source_pin_matches: sourceVerification.matches,
   source_pin_checked: sourceVerification.checked,
@@ -77,7 +77,7 @@ if (!upstream.available) {
 }
 if (!pinMatches) {
   writeJson(report);
-  fail(`x402 upstream checkout must be pinned to ${EXPECTED_UPSTREAM_SHA}`);
+  fail(`x402 upstream checkout must be pinned to ${expectedUpstreamSha}`);
 }
 if (!sourceVerification.matches) {
   writeJson(report);
