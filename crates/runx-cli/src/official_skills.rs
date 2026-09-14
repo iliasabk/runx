@@ -186,6 +186,11 @@ pub(crate) const OFFICIAL_SKILLS: &[OfficialSkillLockEntry] = &[
         digest: "9e3370c09616f2ae0490bfacbf9e944a4631f3e9569c71f2d00133ee1c939afe",
     },
     OfficialSkillLockEntry {
+        skill_id: "runx/list-hygiene-judge",
+        version: "sha-4ffde7a7c650",
+        digest: "ed5f754acec31fe7a1e8b1990e3059bc507c76013c7af6d5a4954508d72c02a2",
+    },
+    OfficialSkillLockEntry {
         skill_id: "runx/marketplace-invoke",
         version: "sha-c41ee376ce4d",
         digest: "7e1932eece4df9ead658f466bb6863edf86b180a084151efa71a02f5f3a41d75",

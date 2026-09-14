@@ -245,6 +245,13 @@
     "catalog_role": "canonical"
   },
   {
+    "skill_id": "runx/list-hygiene-judge",
+    "version": "sha-4ffde7a7c650",
+    "digest": "ed5f754acec31fe7a1e8b1990e3059bc507c76013c7af6d5a4954508d72c02a2",
+    "catalog_visibility": "public",
+    "catalog_role": "canonical"
+  },
+  {
     "skill_id": "runx/marketplace-invoke",
     "version": "sha-c41ee376ce4d",
     "digest": "7e1932eece4df9ead658f466bb6863edf86b180a084151efa71a02f5f3a41d75",

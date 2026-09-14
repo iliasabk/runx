@@ -6,8 +6,8 @@ regenerated from a parallel JavaScript model of Runx execution; current
 structural truth comes from native package validation, operator-context
 expansion, the official lock, and package harnesses.
 
-**Status: implemented.** This covers all 79 top-level skill packages: 71 public
-and 8 internal.
+**Status: implemented.** This covers all 82 top-level skill packages: 78 public
+and 4 internal.
 No additional package is removed or hidden by this review. Improvement recommendations preserve the capability until a separate product decision approves a migration.
 
 ## Product bar
@@ -191,6 +191,7 @@ or an opaque hosted-admission payload inside a typed payment envelope.
 | lead-router | workflow | public/context | javascript, tool:data.digest; 1 agent act -> declared artifact | complete archetype bar | keep | Validated enrichment evidence and consent now bind every route; do-not-contact deterministically records a hold only in the signed Runx receipt, outreach emits the exact canonical send-as input contract, and four focused journeys prove forward compatibility and invented-evidence refusal without claiming delivery. | none |
 | least-privilege | operation | public/canonical | javascript, tool:receipt.query | complete archetype bar | keep | The auditor now compares the caller's grant baseline with normalized exercised scopes from native redacted receipt detail and defers when that evidence is absent. | none |
 | ledger | operation | public/canonical | javascript, tool:receipt.query | complete archetype bar | keep | Cross-run receipt queries and chain verification run through the direct native reader; isolated production-signed trials prove bounded result limits and fail-closed broken-chain reporting. | none |
+| list-hygiene-judge | operation | public/canonical | javascript, tool:data.append_event, tool:data.read_projection | complete archetype bar | keep | Bounded current consent evidence drives a conservative deterministic decision; only admitted suppression or re-permission transitions reach the native ledger append, and exact projection readback proves the write while unsubscribe, existing suppression, stale evidence, and clean recent contacts remain safe. | none |
 | meeting-followup | workflow | public/context | javascript, tool:data.digest; 1 agent act -> declared artifact | complete archetype bar | keep | The contributor-owned meeting lane turns a bounded transcript into evidence-quoted decisions, action items, unsent follow-up copy, and explicitly uncreated task proposals; nine focused journeys prove owner and date ambiguity, injection resistance, exact evidence, non-actionable discussion, and missing-input stops without embedding a provider adapter. | none |
 | marketplace-invoke | operation | public/canonical | javascript, tool:provider.mutate | harness passed; 0 blocking finding(s); 2 operation proof(s); 2 operator journey(s); provider readback unproven | improve | The generic marketplace invocation contract composes one rail-specific buyer skill behind a stable listing, vendor, settlement-family, authority, and idempotency boundary; it neither owns provider credentials nor embeds vendor-specific behavior. | Capture one safe hosted paid invocation with provider, resource, and nested receipt readback; add sibling settlement-family branches only when their hosted adapters exist. |
 | mock-charge | runtime | internal/harness-fixture | javascript | internal; 0 blocking finding(s); not trialled | internal_fixture | Deterministic local simulator proves the charge package shape and always reports that no money moved. | none |
