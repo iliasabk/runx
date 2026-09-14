@@ -1,0 +1,13 @@
+{
+  "schema": "frantic.verification.v1",
+  "bounty": 79,
+  "summary": "All delivery checks for Frantic bounty #79 pass: runx-cli 0.9.1 (>=0.6.14), package crm-cleanup published at sha-53fe0b2c748b, clean registry install, 4/4 harness cases locally and on the installed copy, live-source dogfood sealed a proposed update packet, no write performed.",
+  "checks": {
+    "runx_cli_min_version": {"required": ">=0.6.14", "actual": "runx-cli 0.9.1"},
+    "package_name": {"required": "crm-cleanup", "actual": "crm-cleanup"},
+    "registry_publication": {"ref": "iliasabk/crm-cleanup@sha-53fe0b2c748b", "public_url": "https://runx.ai/x/iliasabk/crm-cleanup", "package_digest": "sha256:9444345e84c7e5eefb4ef2075ac59a1d95c22b6fd72e5abda684590b140e6e4f"},
+    "clean_install": {"command": "runx add iliasabk/crm-cleanup@sha-53fe0b2c748b", "result": "pass"},
+    "local_harness": {"cases": 4, "result": "pass"},
+    "dogfood": {"transcript": "ECTSum NSC_q3_2021 real earnings call, fetched live", "records": "data-store read_projection", "decision": "proposed", "receipt": "sha256:922db219f959196b795b546bc8a832da6ae1e7f1c7dee3eec8d1797574a3eb2d"}
+  }
+}
