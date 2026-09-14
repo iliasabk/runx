@@ -2,14 +2,64 @@
   "schema": "frantic.evidence.v1",
   "bounty": 83,
   "observations": [
-    {"claim_type": "cli_version", "runx_version": "runx-cli 0.9.1"},
-    {"claim_type": "publish", "command": "runx registry publish ./skills/postmortem-maker/SKILL.md --registry https://api.runx.ai", "result": "iliasabk/postmortem-maker@sha-e6bc1b98d052", "public_url": "https://runx.ai/x/iliasabk/postmortem-maker"},
-    {"claim_type": "install", "command": "runx add iliasabk/postmortem-maker@sha-e6bc1b98d052 --registry https://api.runx.ai", "result": "installed cleanly"},
-    {"claim_type": "local_harness", "command": "runx harness ./skills/postmortem-maker", "result": "4/4 cases passed, 0 assertion errors"},
-    {"claim_type": "hosted_harness", "command": "runx harness <installed registry copy>", "result": "4/4 cases passed on the installed package"},
-    {"claim_type": "dogfood_live_source", "command": "runx skill ./skills/web-fetch -i url=https://aws.amazon.com/message/101925/", "result": "sealed fetch of the real AWS DynamoDB post-event summary; incident fragments quote it verbatim", "receipt": "sha256:a238ae0c46f108ad0bed90525b8d6a9d05403cc20182e4ec58ba7062381a2c4e"},
-    {"claim_type": "dogfood_run", "command": "runx skill ./skills/postmortem-maker ... run_make_6cee8a9a55298f09", "result": "decision=publishable, validation pass, sealed receipt", "receipt": "sha256:2df59ed9cc936aeb147273a5f29f860e51ff669a44e165582d493772dd3ee901"},
-    {"claim_type": "send_composition", "command": "runx skill ./skills/send-as plan ...", "result": "sealed plan; publish held behind human-approver gate (no connector bound)", "receipt": "sha256:441fdabde78d808631e73d08648789b8d793f6501b8fcf0b6facf2e1faa9cf5a"},
-    {"claim_type": "harness_cases", "consistent_case": "postmortem-maker-publishable-seals: publishable with gated proposal", "refused_case": "postmortem-maker-invented-citation-refuses: invented quote -> refused, validation fail"}
-  ]
+    {
+      "claim_type": "cli_version",
+      "runx_version": "runx-cli 0.9.1"
+    },
+    {
+      "claim_type": "publish",
+      "command": "runx registry publish ./skills/postmortem-maker/SKILL.md --registry https://api.runx.ai",
+      "result": "iliasabk/postmortem-maker@sha-e6bc1b98d052",
+      "public_url": "https://runx.ai/x/iliasabk/postmortem-maker"
+    },
+    {
+      "claim_type": "install",
+      "command": "runx add iliasabk/postmortem-maker@sha-e6bc1b98d052 --registry https://api.runx.ai",
+      "result": "installed cleanly"
+    },
+    {
+      "claim_type": "local_harness",
+      "command": "runx harness ./skills/postmortem-maker",
+      "result": "4/4 cases passed, 0 assertion errors"
+    },
+    {
+      "claim_type": "hosted_harness",
+      "command": "runx harness <installed registry copy>",
+      "result": "4/4 cases passed on the installed package"
+    },
+    {
+      "claim_type": "dogfood_live_source",
+      "command": "runx skill ./skills/web-fetch -i url=https://aws.amazon.com/message/101925/",
+      "result": "sealed fetch of the real AWS DynamoDB post-event summary; incident fragments quote it verbatim",
+      "receipt": "sha256:a238ae0c46f108ad0bed90525b8d6a9d05403cc20182e4ec58ba7062381a2c4e"
+    },
+    {
+      "claim_type": "dogfood_run",
+      "command": "runx skill ./skills/postmortem-maker ... run_make_6cee8a9a55298f09",
+      "result": "decision=publishable, validation pass, sealed receipt",
+      "receipt": "sha256:2df59ed9cc936aeb147273a5f29f860e51ff669a44e165582d493772dd3ee901"
+    },
+    {
+      "claim_type": "send_composition",
+      "command": "runx skill ./skills/send-as plan ...",
+      "result": "sealed plan; publish held behind human-approver gate (no connector bound)",
+      "receipt": "sha256:441fdabde78d808631e73d08648789b8d793f6501b8fcf0b6facf2e1faa9cf5a"
+    },
+    {
+      "claim_type": "harness_cases",
+      "consistent_case": "postmortem-maker-publishable-seals: publishable with gated proposal",
+      "refused_case": "postmortem-maker-invented-citation-refuses: invented quote -> refused, validation fail"
+    }
+  ],
+  "summary": "postmortem-maker published to the runx registry as iliasabk/postmortem-maker@sha-e6bc1b98d052; local and installed-package harness both pass 4/4 cases; dogfood ran on a live-fetched AWS DynamoDB post-event summary and sealed a publishable result; send-as sealed the human-gated publish composition.",
+  "dogfood": {
+    "source_url": "https://aws.amazon.com/message/101925/",
+    "fetch": "runx skill ./skills/web-fetch -i url=...",
+    "fetch_receipt": "sha256:a238ae0c46f108ad0bed90525b8d6a9d05403cc20182e4ec58ba7062381a2c4e",
+    "run_id": "run_make_6cee8a9a55298f09",
+    "decision": "publishable",
+    "validation": "pass",
+    "receipt": "sha256:2df59ed9cc936aeb147273a5f29f860e51ff669a44e165582d493772dd3ee901",
+    "send_as_plan_receipt": "sha256:441fdabde78d808631e73d08648789b8d793f6501b8fcf0b6facf2e1faa9cf5a"
+  }
 }
