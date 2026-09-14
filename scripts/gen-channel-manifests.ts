@@ -204,7 +204,7 @@ ManifestVersion: ${manifestVersion}
 
 function renderPkgbuild(m: Manifest): string {
   // -bin style PKGBUILD: install the prebuilt musl binary.
-  return `# Maintainer: runxhq <support@runx.ai>
+  return `# Maintainer: runxhq <dev@runx.ai>
 pkgname=runx-bin
 pkgver=${m.version}
 pkgrel=1
