@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "case_count": 4,
+  "assertion_error_count": 0,
+  "assertion_errors": [],
+  "case_names": [
+    "postmortem-maker-publishable-seals",
+    "postmortem-maker-unknowns-block-publish",
+    "postmortem-maker-invented-citation-refuses",
+    "postmortem-maker-needs-fragments"
+  ],
+  "receipt_ids": [
+    "sha256:94ae6f83c7c3073ee49c1e6d112592b54bdf623659aad55cb2f02dce75f6fc91",
+    "sha256:054e1283438c778ba6c875e9d8296e163460d5cd160204b53f031f7b1d95b2bb",
+    "sha256:c98322cfa0d47e7b38689c3f896771f6e835f57f3ea0ed102266ef33fee18bd5"
+  ],
+  "graph_case_count": 4
+}

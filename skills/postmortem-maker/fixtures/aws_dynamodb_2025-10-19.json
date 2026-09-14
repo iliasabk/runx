@@ -1,0 +1,12 @@
+{
+  "incident_ref": "aws-dynamodb-2025-10-19",
+  "source_url": "https://aws.amazon.com/message/101925/",
+  "note": "Fragments transcribed verbatim from the public AWS post-event summary fetched live via the web-fetch skill during the dogfood run.",
+  "incident_fragments": [
+    {"id": "frag-1", "source": "aws-message-101925", "text": "While the event started at 11:48 PM PDT on October 19 and ended at 2:20 PM PDT on October 20, there were three distinct periods of impact to customer applications."},
+    {"id": "frag-2", "source": "aws-message-101925", "text": "Between 11:48 PM PDT on October 19 and 2:40 AM PDT on October 20, customers experienced increased Amazon DynamoDB API error rates in the N. Virginia (us-east-1) Region."},
+    {"id": "frag-3", "source": "aws-message-101925", "text": "The incident was triggered by a latent defect within the service’s automated DNS management system that caused endpoint resolution failures for DynamoDB."},
+    {"id": "frag-4", "source": "aws-message-101925", "text": "The root cause of this issue was a latent race condition in the DynamoDB DNS management system that resulted in an incorrect empty DNS record for the service’s regional endpoint ( dynamodb.us-east-1.amazonaws.com ) that the automation failed to repair."},
+    {"id": "frag-5", "source": "aws-message-101925", "text": "new EC2 instance launches failed and, while instance launches began to succeed from 10:37 AM, some newly launched instances experienced connectivity issues which were resolved by 1:50 PM."}
+  ]
+}

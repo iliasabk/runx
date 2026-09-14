@@ -1,0 +1,7 @@
+{
+  "incident_ref": "inc-batch-2026-08-10",
+  "incident_fragments": [
+    {"id": "frag-1", "source": "cron-log", "text": "Nightly batch failed at step export with exit 1."},
+    {"id": "frag-2", "source": "oncall-note", "text": "The export step input bucket was empty; upstream job status unknown."}
+  ]
+}

@@ -32,6 +32,17 @@ To build the fragment set from live systems, compose `web-fetch` or
 `incident-commander` owns running the incident; this skill owns explaining it
 afterward.
 
+## Verifying a dogfood run
+
+A meaningful dogfood run reads the incident record from a real source at run
+time — a `web-fetch` of a public postmortem or incident thread, or a
+`data-store` read of a live ticket — rather than a hand-pasted fragment list.
+Keep the fetched bytes as the evidence artifact and quote fragments verbatim
+from them; the finalize step refuses any quote the fragments do not contain.
+When the verdict is `publishable`, compose the already-shipped `send-as`
+skill for the comms send so the publish proposal is exercised, and keep the
+result sealed behind its human-approver gate.
+
 ## Output
 
 `postmortem` (`runx.postmortem.v1`) carries `decision` (`publishable`,
