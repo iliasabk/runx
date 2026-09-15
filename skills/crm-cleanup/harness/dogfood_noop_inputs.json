@@ -1,0 +1,1 @@
+{"transcript": "Quarterly sync with Norfolk Southern. Operations confirmed everything is on track; no account changes were discussed.", "crm_source": {"data_source_ref": "local://runx-data-store/crm-dogfood-noop", "resource": "crm_records", "aggregate_id": "pipeline-q3"}, "crm_schema": {"allowed_fields": ["account_status", "next_action", "health_score"]}}
