@@ -7,7 +7,9 @@
   "observations": [
     {
       "claim_type": "cli_version",
-      "runx_version": "runx-cli 0.9.1"
+      "runx_version": "runx-cli 0.9.1",
+      "command": "runx --version",
+      "output": "runx-cli 0.9.1"
     },
     {
       "claim_type": "publish",
@@ -79,11 +81,26 @@
     "receipt_ref": "sha256:87b7b267a4235be66cf83edc98c92a0e64d2cd3882abf7ef7da510aa902e911e",
     "verify_verdict": "valid (signature: local-development runtime-skeleton; content_address match; findings 0)",
     "harness_cases": [
-      "crm-cleanup-executes-allowlisted-updates",
-      "crm-cleanup-noop-writes-nothing",
-      "crm-cleanup-rejects-unlisted-field",
-      "crm-cleanup-refuses-invented-quote",
-      "crm-cleanup-needs-transcript"
+      {
+        "name": "crm-cleanup-executes-allowlisted-updates",
+        "status": "sealed"
+      },
+      {
+        "name": "crm-cleanup-noop-writes-nothing",
+        "status": "sealed"
+      },
+      {
+        "name": "crm-cleanup-rejects-unlisted-field",
+        "status": "sealed"
+      },
+      {
+        "name": "crm-cleanup-refuses-invented-quote",
+        "status": "sealed"
+      },
+      {
+        "name": "crm-cleanup-needs-transcript",
+        "status": "failure"
+      }
     ],
     "run_id": "run_reconcile_e359651c0afb5730",
     "decision": "executed",
