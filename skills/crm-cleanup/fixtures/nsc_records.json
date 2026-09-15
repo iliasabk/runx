@@ -1,5 +1,1 @@
-{
-  "crm_records": [{"id":"acct-nsc","account_name":"Norfolk Southern","account_status":"active","next_action":"none","health_score":72}],
-  "crm_schema": {"allowed_fields":["account_status","next_action","health_score"]},
-  "source": "read via runx data-store read_projection on local://runx-data-store/crm-dogfood (sealed append sha256:4e16734c..., read sha256:1bdaccc5...)"
-}
+{"crm_records": [{"id": "acct-nsc", "account_name": "Norfolk Southern", "account_status": "active", "next_action": "none", "health_score": 72}], "crm_schema": {"allowed_fields": ["account_status", "next_action", "health_score"]}, "source": "seeded as crm.records_snapshot on local://runx-data-store/crm-dogfood-final (append_event receipt recorded in deliverables/frantic-79/)"}
