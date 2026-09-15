@@ -1,0 +1,464 @@
+{
+  "context": {
+    "step_outputs": {
+      "bootstrap-gate": {
+        "bootstrap_gate": {
+          "decision": "skip",
+          "idempotency_key": "crm-cleanup:bootstrap:v1",
+          "snapshot_event": {
+            "payload": {
+              "records": []
+            },
+            "type": "crm.records_snapshot"
+          }
+        }
+      },
+      "decide": {
+        "decision_packet": {
+          "data": {
+            "decision": "no_action",
+            "field_updates": [],
+            "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+            "reason": "No actionable field updates were supported by the transcript; no write occurred.",
+            "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+            "rejected_updates": [],
+            "schema": "runx.crm_cleanup_decision.v1",
+            "takeaways": [
+              "Quarterly sync confirmed Norfolk Southern remains on track.",
+              "No account changes were discussed."
+            ],
+            "transcript_digest": "sha256:e11490079674dd91a2d0b9a00bc708f4abe94ff3b0fbddf66de14d9e8283028d",
+            "validation": {
+              "findings": [],
+              "status": "pass"
+            },
+            "write_event": {
+              "payload": {
+                "decided_by": "crm-cleanup",
+                "evidence": {
+                  "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                  "transcript_digest": "sha256:e11490079674dd91a2d0b9a00bc708f4abe94ff3b0fbddf66de14d9e8283028d"
+                },
+                "updates": []
+              },
+              "type": "crm.field_updates"
+            }
+          }
+        }
+      },
+      "digest-records": {
+        "digest_result": {
+          "data": {
+            "algorithm": "sha256",
+            "digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8"
+          }
+        }
+      },
+      "digest-transcript": {
+        "digest_result": {
+          "data": {
+            "algorithm": "sha256",
+            "digest": "sha256:e11490079674dd91a2d0b9a00bc708f4abe94ff3b0fbddf66de14d9e8283028d"
+          }
+        }
+      },
+      "project-records": {
+        "records_packet": {
+          "data": {
+            "event_count": 1,
+            "head_version": 1,
+            "last_event_ref": "crm_records:pipeline-q3:1",
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "active",
+                "health_score": 72,
+                "id": "acct-nsc",
+                "next_action": "none"
+              }
+            ],
+            "schema": "runx.crm_records_projection.v1"
+          }
+        }
+      },
+      "read-back": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 1,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-noop",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [
+              {
+                "committed_at": "2026-09-15T11:30:19.723Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-noop:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "has_more": false,
+            "idempotency_key": null,
+            "limit": 50,
+            "next_after_version": 1,
+            "operation": "read_events",
+            "projection": null,
+            "projection_digest": "sha256:53e44c3c5aa5dd8930d5ecd6fefee4d33ee1e9af34395b74d9b3695d12ee125d",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:9df0ac5f16b47168989f336ae9daf4a9b55d572158ebb9f069b1a9f08e52bbaf",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:8855384182afcf974f12da5749e598cb7fd116891427bbe7868cbbb6d357c93c",
+            "rows": [
+              {
+                "committed_at": "2026-09-15T11:30:19.723Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-noop:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "read-events": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 1,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-noop",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [
+              {
+                "committed_at": "2026-09-15T11:30:19.723Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-noop:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "has_more": false,
+            "idempotency_key": null,
+            "limit": 50,
+            "next_after_version": 1,
+            "operation": "read_events",
+            "projection": null,
+            "projection_digest": "sha256:53e44c3c5aa5dd8930d5ecd6fefee4d33ee1e9af34395b74d9b3695d12ee125d",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:9df0ac5f16b47168989f336ae9daf4a9b55d572158ebb9f069b1a9f08e52bbaf",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:8855384182afcf974f12da5749e598cb7fd116891427bbe7868cbbb6d357c93c",
+            "rows": [
+              {
+                "committed_at": "2026-09-15T11:30:19.723Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-noop:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "read-head": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 1,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-noop",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [],
+            "idempotency_key": null,
+            "operation": "read_projection",
+            "projection": {
+              "aggregate_id": "pipeline-q3",
+              "event_count": 1,
+              "last_event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+              "last_event_ref": "crm_records:pipeline-q3:1",
+              "last_event_type": "crm.records_snapshot",
+              "resource": "crm_records",
+              "version": 1
+            },
+            "projection_digest": "sha256:53e44c3c5aa5dd8930d5ecd6fefee4d33ee1e9af34395b74d9b3695d12ee125d",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:9df0ac5f16b47168989f336ae9daf4a9b55d572158ebb9f069b1a9f08e52bbaf",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:67e9b8b7d6e5ab01ca9d248934b2768cbd89b9e4be9d277b09d9d7e87c2da316",
+            "rows": [],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "reconcile": {
+        "reconcile_draft": {
+          "data": {
+            "takeaways": [
+              "Quarterly sync confirmed Norfolk Southern remains on track.",
+              "No account changes were discussed."
+            ],
+            "updates": []
+          }
+        }
+      },
+      "seal": {
+        "crm_cleanup_result": {
+          "data": {
+            "decision": "no_action",
+            "field_updates": [],
+            "reason": "No actionable field updates were supported by the transcript; no write occurred.",
+            "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+            "rejected_updates": [],
+            "schema": "runx.crm_cleanup_result.v1",
+            "takeaways": [
+              "Quarterly sync confirmed Norfolk Southern remains on track.",
+              "No account changes were discussed."
+            ],
+            "transcript_digest": "sha256:e11490079674dd91a2d0b9a00bc708f4abe94ff3b0fbddf66de14d9e8283028d",
+            "validation": {
+              "findings": [],
+              "status": "pass"
+            },
+            "write_result": {
+              "after": {
+                "event_count": 1,
+                "head_version": 1,
+                "records": [
+                  {
+                    "account_name": "Norfolk Southern",
+                    "account_status": "active",
+                    "health_score": 72,
+                    "id": "acct-nsc",
+                    "next_action": "none"
+                  }
+                ]
+              },
+              "aggregate_id": "pipeline-q3",
+              "before": {
+                "event_count": 1,
+                "head_version": 1,
+                "records": [
+                  {
+                    "account_name": "Norfolk Southern",
+                    "account_status": "active",
+                    "health_score": 72,
+                    "id": "acct-nsc",
+                    "next_action": "none"
+                  }
+                ]
+              },
+              "committed_event": null,
+              "data_source_ref": "local://runx-data-store/crm-dogfood-noop",
+              "executed": false,
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "transport": "data.append_event"
+            }
+          }
+        },
+        "field_updates": [],
+        "takeaways": [
+          "Quarterly sync confirmed Norfolk Southern remains on track.",
+          "No account changes were discussed."
+        ],
+        "write_result": {
+          "after": {
+            "event_count": 1,
+            "head_version": 1,
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "active",
+                "health_score": 72,
+                "id": "acct-nsc",
+                "next_action": "none"
+              }
+            ]
+          },
+          "aggregate_id": "pipeline-q3",
+          "before": {
+            "event_count": 1,
+            "head_version": 1,
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "active",
+                "health_score": 72,
+                "id": "acct-nsc",
+                "next_action": "none"
+              }
+            ]
+          },
+          "committed_event": null,
+          "data_source_ref": "local://runx-data-store/crm-dogfood-noop",
+          "executed": false,
+          "provider": "sqlite-event-store",
+          "resource": "crm_records",
+          "transport": "data.append_event"
+        }
+      }
+    }
+  },
+  "trace": {
+    "graph": "crm-cleanup-reconcile",
+    "status": "succeeded",
+    "steps": [
+      {
+        "receipt_id": "sha256:9156948791d6e9137e8e200f0d96c9367752b278f031c0bb3a07c4baaf38b955",
+        "skill": "bootstrap-gate",
+        "status": "success",
+        "step_id": "bootstrap-gate"
+      },
+      {
+        "receipt_id": "sha256:03f6ba5baee1df928a2dc987dc7f24822f13f6b9e79bd478cf0e5e584b834d87",
+        "skill": "tool:data.read_projection",
+        "status": "success",
+        "step_id": "read-head"
+      },
+      {
+        "receipt_id": "sha256:23a81c86ffe0cb4b10090706f1707de679eeefd6c3cd77ca047678406b280316",
+        "skill": "tool:data.read_events",
+        "status": "success",
+        "step_id": "read-events"
+      },
+      {
+        "receipt_id": "sha256:43e1f01df7be6a32bcab02cc747e6310ab04d2e626a2918ae01c92f46b277b5e",
+        "skill": "project-records",
+        "status": "success",
+        "step_id": "project-records"
+      },
+      {
+        "receipt_id": "sha256:8fbaa6e4c68f30eeb812fb0f3a565b0fe6a192a04af80f316853eca3f6bede73",
+        "skill": "tool:data.digest",
+        "status": "success",
+        "step_id": "digest-transcript"
+      },
+      {
+        "receipt_id": "sha256:ba3161037542de92b54bea9b1f62b0d153df33b03950acb893802d9213d6e969",
+        "skill": "tool:data.digest",
+        "status": "success",
+        "step_id": "digest-records"
+      },
+      {
+        "receipt_id": "sha256:b0dc1a92223d88aab40eef8ab8b6243874ca523736ba680d94d49aaab2eaa07d",
+        "skill": "run:agent-task",
+        "status": "success",
+        "step_id": "reconcile"
+      },
+      {
+        "receipt_id": "sha256:58237de8095e7b74317603fa2d8b3b29119e80db2db4a68a6055c5e0caec6975",
+        "skill": "decide",
+        "status": "success",
+        "step_id": "decide"
+      },
+      {
+        "receipt_id": "sha256:fc9f1d9afdfca9fa6bfbe09ce45457fdbe07a72f051aca397a3bfa0d06b85c73",
+        "skill": "tool:data.read_events",
+        "status": "success",
+        "step_id": "read-back"
+      },
+      {
+        "receipt_id": "sha256:226fca3bf0231843739432a6ac1b83e93644c40d114069ad80586f1deb3e8917",
+        "skill": "seal",
+        "status": "success",
+        "step_id": "seal"
+      }
+    ]
+  }
+}

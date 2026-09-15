@@ -1,0 +1,754 @@
+{
+  "context": {
+    "step_outputs": {
+      "bootstrap-gate": {
+        "bootstrap_gate": {
+          "decision": "skip",
+          "idempotency_key": "crm-cleanup:bootstrap:v1",
+          "snapshot_event": {
+            "payload": {
+              "records": []
+            },
+            "type": "crm.records_snapshot"
+          }
+        }
+      },
+      "decide": {
+        "decision_packet": {
+          "data": {
+            "decision": "executed",
+            "field_updates": [
+              {
+                "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                "field": "account_status",
+                "from": "active",
+                "record_id": "acct-nsc",
+                "to": "watch"
+              },
+              {
+                "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                "field": "next_action",
+                "from": "none",
+                "record_id": "acct-nsc",
+                "to": "Revisit service-level impact in the fourth quarter review"
+              },
+              {
+                "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                "field": "health_score",
+                "from": 72,
+                "record_id": "acct-nsc",
+                "to": 68
+              }
+            ],
+            "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+            "reason": "Executed 3 allowlisted field update(s), each traced to transcript evidence, through the CRM event-store transport.",
+            "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+            "rejected_updates": [],
+            "schema": "runx.crm_cleanup_decision.v1",
+            "takeaways": [
+              "Norfolk Southern delivered third quarter records for operating ratio, net income, income from railway operations and EPS.",
+              "Revenue grew 14% on steady volume while the network ran with 7% fewer people amid supply chain disruptions.",
+              "Management expects continued progress in the fourth quarter."
+            ],
+            "transcript_digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742",
+            "validation": {
+              "findings": [],
+              "status": "pass"
+            },
+            "write_event": {
+              "payload": {
+                "decided_by": "crm-cleanup",
+                "evidence": {
+                  "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                  "transcript_digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742"
+                },
+                "updates": [
+                  {
+                    "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                    "field": "account_status",
+                    "from": "active",
+                    "record_id": "acct-nsc",
+                    "to": "watch"
+                  },
+                  {
+                    "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                    "field": "next_action",
+                    "from": "none",
+                    "record_id": "acct-nsc",
+                    "to": "Revisit service-level impact in the fourth quarter review"
+                  },
+                  {
+                    "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                    "field": "health_score",
+                    "from": 72,
+                    "record_id": "acct-nsc",
+                    "to": 68
+                  }
+                ]
+              },
+              "type": "crm.field_updates"
+            }
+          }
+        }
+      },
+      "digest-records": {
+        "digest_result": {
+          "data": {
+            "algorithm": "sha256",
+            "digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8"
+          }
+        }
+      },
+      "digest-transcript": {
+        "digest_result": {
+          "data": {
+            "algorithm": "sha256",
+            "digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742"
+          }
+        }
+      },
+      "project-records": {
+        "records_packet": {
+          "data": {
+            "event_count": 1,
+            "head_version": 1,
+            "last_event_ref": "crm_records:pipeline-q3:1",
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "active",
+                "health_score": 72,
+                "id": "acct-nsc",
+                "next_action": "none"
+              }
+            ],
+            "schema": "runx.crm_records_projection.v1"
+          }
+        }
+      },
+      "read-back": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 2,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 2,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [
+              {
+                "committed_at": "2026-09-15T11:29:11.148Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-final:seed:nsc:v1",
+                "version": 1
+              },
+              {
+                "committed_at": "2026-09-15T11:29:51.645Z",
+                "event": {
+                  "payload": {
+                    "decided_by": "crm-cleanup",
+                    "evidence": {
+                      "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                      "transcript_digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742"
+                    },
+                    "updates": [
+                      {
+                        "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                        "field": "account_status",
+                        "from": "active",
+                        "record_id": "acct-nsc",
+                        "to": "watch"
+                      },
+                      {
+                        "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                        "field": "next_action",
+                        "from": "none",
+                        "record_id": "acct-nsc",
+                        "to": "Revisit service-level impact in the fourth quarter review"
+                      },
+                      {
+                        "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                        "field": "health_score",
+                        "from": 72,
+                        "record_id": "acct-nsc",
+                        "to": 68
+                      }
+                    ]
+                  },
+                  "type": "crm.field_updates"
+                },
+                "event_digest": "sha256:eb689cf2ab23d60bb67c0abfe0ec551c69d57d13c17a36ac4ed663ae8a83f45a",
+                "event_ref": "crm_records:pipeline-q3:2",
+                "event_type": "crm.field_updates",
+                "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+                "version": 2
+              }
+            ],
+            "has_more": false,
+            "idempotency_key": null,
+            "limit": 50,
+            "next_after_version": 2,
+            "operation": "read_events",
+            "projection": null,
+            "projection_digest": "sha256:1b4e8e2e6756e42a900c8b93214d1b3016838fff619604e3af68cb0285bc24bf",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:339089130bf74bb4bbb49c01a4ca1e266a5c97fc5d06040f5b7a6c07265f5f36",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:c553b47ca1b6ba7c74759f3887ec9a2832044179855b61542757733ef3cee7bd",
+            "rows": [
+              {
+                "committed_at": "2026-09-15T11:29:11.148Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-final:seed:nsc:v1",
+                "version": 1
+              },
+              {
+                "committed_at": "2026-09-15T11:29:51.645Z",
+                "event": {
+                  "payload": {
+                    "decided_by": "crm-cleanup",
+                    "evidence": {
+                      "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                      "transcript_digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742"
+                    },
+                    "updates": [
+                      {
+                        "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                        "field": "account_status",
+                        "from": "active",
+                        "record_id": "acct-nsc",
+                        "to": "watch"
+                      },
+                      {
+                        "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                        "field": "next_action",
+                        "from": "none",
+                        "record_id": "acct-nsc",
+                        "to": "Revisit service-level impact in the fourth quarter review"
+                      },
+                      {
+                        "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                        "field": "health_score",
+                        "from": 72,
+                        "record_id": "acct-nsc",
+                        "to": 68
+                      }
+                    ]
+                  },
+                  "type": "crm.field_updates"
+                },
+                "event_digest": "sha256:eb689cf2ab23d60bb67c0abfe0ec551c69d57d13c17a36ac4ed663ae8a83f45a",
+                "event_ref": "crm_records:pipeline-q3:2",
+                "event_type": "crm.field_updates",
+                "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+                "version": 2
+              }
+            ],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "read-events": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 1,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [
+              {
+                "committed_at": "2026-09-15T11:29:11.148Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-final:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "has_more": false,
+            "idempotency_key": null,
+            "limit": 50,
+            "next_after_version": 1,
+            "operation": "read_events",
+            "projection": null,
+            "projection_digest": "sha256:53e44c3c5aa5dd8930d5ecd6fefee4d33ee1e9af34395b74d9b3695d12ee125d",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:339089130bf74bb4bbb49c01a4ca1e266a5c97fc5d06040f5b7a6c07265f5f36",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:12edfd590d70893d3dd73d76e62292fc72d532a29693779b41e4a6da17e3454b",
+            "rows": [
+              {
+                "committed_at": "2026-09-15T11:29:11.148Z",
+                "event": {
+                  "payload": {
+                    "records": [
+                      {
+                        "account_name": "Norfolk Southern",
+                        "account_status": "active",
+                        "health_score": 72,
+                        "id": "acct-nsc",
+                        "next_action": "none"
+                      }
+                    ]
+                  },
+                  "type": "crm.records_snapshot"
+                },
+                "event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+                "event_ref": "crm_records:pipeline-q3:1",
+                "event_type": "crm.records_snapshot",
+                "idempotency_key": "crm-dogfood-final:seed:nsc:v1",
+                "version": 1
+              }
+            ],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "read-head": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 1,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+            "event_digest": null,
+            "event_ref": null,
+            "events": [],
+            "idempotency_key": null,
+            "operation": "read_projection",
+            "projection": {
+              "aggregate_id": "pipeline-q3",
+              "event_count": 1,
+              "last_event_digest": "sha256:179a380573b703c961d4fc7222bf2fca457b3f3b941af0d555ecc17d98e4f454",
+              "last_event_ref": "crm_records:pipeline-q3:1",
+              "last_event_type": "crm.records_snapshot",
+              "resource": "crm_records",
+              "version": 1
+            },
+            "projection_digest": "sha256:53e44c3c5aa5dd8930d5ecd6fefee4d33ee1e9af34395b74d9b3695d12ee125d",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:339089130bf74bb4bbb49c01a4ca1e266a5c97fc5d06040f5b7a6c07265f5f36",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:67e9b8b7d6e5ab01ca9d248934b2768cbd89b9e4be9d277b09d9d7e87c2da316",
+            "rows": [],
+            "schema": "runx.data.operation_result.v1",
+            "status": "read",
+            "stop_conditions": []
+          }
+        }
+      },
+      "reconcile": {
+        "reconcile_draft": {
+          "data": {
+            "takeaways": [
+              "Norfolk Southern delivered third quarter records for operating ratio, net income, income from railway operations and EPS.",
+              "Revenue grew 14% on steady volume while the network ran with 7% fewer people amid supply chain disruptions.",
+              "Management expects continued progress in the fourth quarter."
+            ],
+            "updates": [
+              {
+                "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                "field": "account_status",
+                "record_id": "acct-nsc",
+                "to": "watch"
+              },
+              {
+                "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                "field": "next_action",
+                "record_id": "acct-nsc",
+                "to": "Revisit service-level impact in the fourth quarter review"
+              },
+              {
+                "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                "field": "health_score",
+                "record_id": "acct-nsc",
+                "to": 68
+              }
+            ]
+          }
+        }
+      },
+      "seal": {
+        "crm_cleanup_result": {
+          "data": {
+            "decision": "executed",
+            "field_updates": [
+              {
+                "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                "field": "account_status",
+                "from": "active",
+                "record_id": "acct-nsc",
+                "to": "watch"
+              },
+              {
+                "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                "field": "next_action",
+                "from": "none",
+                "record_id": "acct-nsc",
+                "to": "Revisit service-level impact in the fourth quarter review"
+              },
+              {
+                "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                "field": "health_score",
+                "from": 72,
+                "record_id": "acct-nsc",
+                "to": 68
+              }
+            ],
+            "reason": "Executed 3 allowlisted field update(s), each traced to transcript evidence, through the CRM event-store transport.",
+            "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+            "rejected_updates": [],
+            "schema": "runx.crm_cleanup_result.v1",
+            "takeaways": [
+              "Norfolk Southern delivered third quarter records for operating ratio, net income, income from railway operations and EPS.",
+              "Revenue grew 14% on steady volume while the network ran with 7% fewer people amid supply chain disruptions.",
+              "Management expects continued progress in the fourth quarter."
+            ],
+            "transcript_digest": "sha256:e72fa0fd8c408ad0596131cdd0a0321c959125397c3573a1212f72d8b9b7d742",
+            "validation": {
+              "findings": [],
+              "status": "pass"
+            },
+            "write_result": {
+              "after": {
+                "event_count": 2,
+                "head_version": 2,
+                "records": [
+                  {
+                    "account_name": "Norfolk Southern",
+                    "account_status": "watch",
+                    "health_score": 68,
+                    "id": "acct-nsc",
+                    "next_action": "Revisit service-level impact in the fourth quarter review"
+                  }
+                ]
+              },
+              "aggregate_id": "pipeline-q3",
+              "before": {
+                "event_count": 1,
+                "head_version": 1,
+                "records": [
+                  {
+                    "account_name": "Norfolk Southern",
+                    "account_status": "active",
+                    "health_score": 72,
+                    "id": "acct-nsc",
+                    "next_action": "none"
+                  }
+                ]
+              },
+              "committed_event": {
+                "applied_updates": [
+                  {
+                    "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                    "field": "account_status",
+                    "from": "active",
+                    "record_id": "acct-nsc",
+                    "to": "watch"
+                  },
+                  {
+                    "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                    "field": "next_action",
+                    "from": "none",
+                    "record_id": "acct-nsc",
+                    "to": "Revisit service-level impact in the fourth quarter review"
+                  },
+                  {
+                    "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                    "field": "health_score",
+                    "from": 72,
+                    "record_id": "acct-nsc",
+                    "to": 68
+                  }
+                ],
+                "event_digest": "sha256:eb689cf2ab23d60bb67c0abfe0ec551c69d57d13c17a36ac4ed663ae8a83f45a",
+                "event_ref": "crm_records:pipeline-q3:2",
+                "event_type": "crm.field_updates",
+                "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+                "version": 2
+              },
+              "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+              "executed": true,
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "transport": "data.append_event"
+            }
+          }
+        },
+        "field_updates": [
+          {
+            "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+            "field": "account_status",
+            "from": "active",
+            "record_id": "acct-nsc",
+            "to": "watch"
+          },
+          {
+            "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+            "field": "next_action",
+            "from": "none",
+            "record_id": "acct-nsc",
+            "to": "Revisit service-level impact in the fourth quarter review"
+          },
+          {
+            "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+            "field": "health_score",
+            "from": 72,
+            "record_id": "acct-nsc",
+            "to": 68
+          }
+        ],
+        "takeaways": [
+          "Norfolk Southern delivered third quarter records for operating ratio, net income, income from railway operations and EPS.",
+          "Revenue grew 14% on steady volume while the network ran with 7% fewer people amid supply chain disruptions.",
+          "Management expects continued progress in the fourth quarter."
+        ],
+        "write_result": {
+          "after": {
+            "event_count": 2,
+            "head_version": 2,
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "watch",
+                "health_score": 68,
+                "id": "acct-nsc",
+                "next_action": "Revisit service-level impact in the fourth quarter review"
+              }
+            ]
+          },
+          "aggregate_id": "pipeline-q3",
+          "before": {
+            "event_count": 1,
+            "head_version": 1,
+            "records": [
+              {
+                "account_name": "Norfolk Southern",
+                "account_status": "active",
+                "health_score": 72,
+                "id": "acct-nsc",
+                "next_action": "none"
+              }
+            ]
+          },
+          "committed_event": {
+            "applied_updates": [
+              {
+                "evidence_quote": "significant supply chain disruptions and labor shortages across the country",
+                "field": "account_status",
+                "from": "active",
+                "record_id": "acct-nsc",
+                "to": "watch"
+              },
+              {
+                "evidence_quote": "I expect we will show continued progress in the fourth quarter as we see the fruits of our efforts",
+                "field": "next_action",
+                "from": "none",
+                "record_id": "acct-nsc",
+                "to": "Revisit service-level impact in the fourth quarter review"
+              },
+              {
+                "evidence_quote": "enabled us to run the network with 7% fewer people in the quarter compared to a year ago",
+                "field": "health_score",
+                "from": 72,
+                "record_id": "acct-nsc",
+                "to": 68
+              }
+            ],
+            "event_digest": "sha256:eb689cf2ab23d60bb67c0abfe0ec551c69d57d13c17a36ac4ed663ae8a83f45a",
+            "event_ref": "crm_records:pipeline-q3:2",
+            "event_type": "crm.field_updates",
+            "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+            "version": 2
+          },
+          "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+          "executed": true,
+          "provider": "sqlite-event-store",
+          "resource": "crm_records",
+          "transport": "data.append_event"
+        }
+      },
+      "write": {
+        "data_operation_result": {
+          "data": {
+            "after_version": 2,
+            "aggregate_id": "pipeline-q3",
+            "before_version": 1,
+            "data_source_ref": "local://runx-data-store/crm-dogfood-final",
+            "event_digest": "sha256:eb689cf2ab23d60bb67c0abfe0ec551c69d57d13c17a36ac4ed663ae8a83f45a",
+            "event_ref": "crm_records:pipeline-q3:2",
+            "events": [],
+            "idempotency_key": "crm-cleanup:pipeline-q3:ee8cf26ed1da1f5461841884299ce012",
+            "operation": "append_event",
+            "projection": null,
+            "projection_digest": "sha256:1b4e8e2e6756e42a900c8b93214d1b3016838fff619604e3af68cb0285bc24bf",
+            "provider": "sqlite-event-store",
+            "provider_evidence": {
+              "adapter": "data.sqlite",
+              "aggregate_id": "pipeline-q3",
+              "data_source_ref_digest": "sha256:339089130bf74bb4bbb49c01a4ca1e266a5c97fc5d06040f5b7a6c07265f5f36",
+              "provider": "sqlite-event-store",
+              "resource": "crm_records",
+              "storage_class": "sqlite"
+            },
+            "redactions": [],
+            "resource": "crm_records",
+            "result_digest": "sha256:e3e488514b034b6643e33868d0118fc786f135f3bfe90d52152e46189951c349",
+            "rows": [],
+            "schema": "runx.data.operation_result.v1",
+            "status": "committed",
+            "stop_conditions": []
+          }
+        }
+      }
+    }
+  },
+  "trace": {
+    "graph": "crm-cleanup-reconcile",
+    "status": "succeeded",
+    "steps": [
+      {
+        "receipt_id": "sha256:dae59206b025428308a541453e1c15304f56bf81221f1ff7ce03b14fff7ab84b",
+        "skill": "bootstrap-gate",
+        "status": "success",
+        "step_id": "bootstrap-gate"
+      },
+      {
+        "receipt_id": "sha256:8b31677214c192f55827aca9f45e9d68aefc2373cd164f1c64e9af81a8b0cb46",
+        "skill": "tool:data.read_projection",
+        "status": "success",
+        "step_id": "read-head"
+      },
+      {
+        "receipt_id": "sha256:dce87c7fede888c8f81ceca6924ee58400b3c8ff25366c95d23050fa836671d1",
+        "skill": "tool:data.read_events",
+        "status": "success",
+        "step_id": "read-events"
+      },
+      {
+        "receipt_id": "sha256:e65d07ef71ccf776727175fd6e047ac0d092ad0c191b31ef32fcb28f5ce81956",
+        "skill": "project-records",
+        "status": "success",
+        "step_id": "project-records"
+      },
+      {
+        "receipt_id": "sha256:752a15fc5c9a5ca543cd5a87de10825cafcd4537b894368a58b9d116a3e82911",
+        "skill": "tool:data.digest",
+        "status": "success",
+        "step_id": "digest-transcript"
+      },
+      {
+        "receipt_id": "sha256:ac0e51ecf21d68aa7592d1885ba5abac5c9a5603d63b012cd5408a77970ddf02",
+        "skill": "tool:data.digest",
+        "status": "success",
+        "step_id": "digest-records"
+      },
+      {
+        "receipt_id": "sha256:e89ff81464e64b7bbf8c89a1a0453c22d7ae31c63a6c303d0bb44d880e662f87",
+        "skill": "run:agent-task",
+        "status": "success",
+        "step_id": "reconcile"
+      },
+      {
+        "receipt_id": "sha256:9b02e5b0558ef0a0e6aa91e1476788b522f90e8bb91b72dd74e5a8ab6d960ba9",
+        "skill": "decide",
+        "status": "success",
+        "step_id": "decide"
+      },
+      {
+        "receipt_id": "sha256:9ad9e8575a1fe2c3992baf98ac4613347099b6c6e677af57801a4d8df5eb3bbb",
+        "skill": "tool:data.append_event",
+        "status": "success",
+        "step_id": "write"
+      },
+      {
+        "receipt_id": "sha256:536508ac44ac60b4ae51732bf1f856256abd3bc71d1f0774f370eb7ccea3e794",
+        "skill": "tool:data.read_events",
+        "status": "success",
+        "step_id": "read-back"
+      },
+      {
+        "receipt_id": "sha256:8f794ab919429501867830515c1704a693a82cc9957872fea177e437966bce5d",
+        "skill": "seal",
+        "status": "success",
+        "step_id": "seal"
+      }
+    ]
+  }
+}

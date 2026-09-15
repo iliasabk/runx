@@ -1,0 +1,60 @@
+{
+  "schema": "frantic.verification.v2",
+  "bounty": 79,
+  "summary": "All delivery checks pass on runx-cli 0.9.1: crm-cleanup published at iliasabk/crm-cleanup@sha-b96caf149e87, clean registry install, 5/5 harness cases on source and installed package, live dogfood executed a real CRM transport write with sealed write_result{before,after,committed_event}, and a live no-op dogfood committed nothing. Both receipts verify valid via runx verify --allow-local-development-signatures.",
+  "checks": {
+    "runx_cli_min_version": {
+      "required": ">=0.6.14",
+      "actual": "runx-cli 0.9.1"
+    },
+    "package_name": {
+      "required": "crm-cleanup",
+      "actual": "crm-cleanup"
+    },
+    "registry_publication": {
+      "ref": "iliasabk/crm-cleanup@sha-b96caf149e87",
+      "public_url": "https://runx.ai/x/iliasabk/crm-cleanup",
+      "digest": "0160d1c59eb16c428de899b902e8a5d92b6020208c2b11559483707a81d64e06"
+    },
+    "registry_read": {
+      "command": "runx registry read iliasabk/crm-cleanup@sha-b96caf149e87 --json",
+      "result": "resolves metadata + digests"
+    },
+    "clean_install": {
+      "command": "runx add iliasabk/crm-cleanup@sha-b96caf149e87 --registry https://api.runx.ai",
+      "result": "pass"
+    },
+    "local_harness": {
+      "cases": 5,
+      "result": "pass"
+    },
+    "installed_harness": {
+      "cases": 5,
+      "result": "pass"
+    },
+    "runtime_source_read": {
+      "ops": [
+        "data.read_projection",
+        "data.read_events"
+      ],
+      "result": "records read from the live event store at run time, not from a pasted fixture"
+    },
+    "crm_transport_write": {
+      "op": "data.append_event",
+      "result": "crm.field_updates committed at crm_records:pipeline-q3:2 (event_digest sha256:eb689cf2...)"
+    },
+    "typed_outputs": {
+      "takeaways": 3,
+      "field_updates": 3,
+      "write_result": "{before,after,committed_event,executed:true}"
+    },
+    "noop_path": {
+      "result": "decision no_action, write step not executed, committed_event null, before==after"
+    },
+    "receipt_verify": {
+      "command": "runx verify --receipt <receipt> --allow-local-development-signatures --json",
+      "dogfood": "valid",
+      "noop": "valid"
+    }
+  }
+}
