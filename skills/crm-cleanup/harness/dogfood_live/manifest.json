@@ -1,0 +1,56 @@
+{
+ "run_id": "run_reconcile-live_93bed87fb5d96fd3",
+ "root_receipt": "sha256:d454bb7747e64e1cb43afeccc24ffe9857a1902d28421c7e2824048c927c9a46",
+ "graph": "crm-cleanup-reconcile-live",
+ "skill": "iliasabk/crm-cleanup@sha-60be8f50f1b5 (version 0.2.1)",
+ "package_digest": "sha256:0ebaa0d9a89b37cd8aba53c292634cc0ff26e2eafa2fcd23caffd12f9e631c4b",
+ "registry": "https://api.runx.ai",
+ "note": "reconcile-live runner: read-source-fetch executes governed tool web.fetch inside the run against the connector export; graph-state.json carries the step outputs (fetch_result with final_url, status, extracted body).",
+ "children": [
+  {
+   "step": "read-source-fetch (tool: web.fetch)",
+   "receipt": "sha256:13cfdc1c011d3d3b6149d3d9c3b0710e29dde57ff63935ac9c2561bcfeadccdc",
+   "file": "sha256-13cfdc1c011d3d3b6149d3d9c3b0710e29dde57ff63935ac9c2561bcfeadccdc.json"
+  },
+  {
+   "step": "read-source",
+   "receipt": "sha256:c17d699167bb8e85dade7d777b6dc29ab93bbf3e23f8f7f8c984d7fa34efe151",
+   "file": "sha256-c17d699167bb8e85dade7d777b6dc29ab93bbf3e23f8f7f8c984d7fa34efe151.json"
+  },
+  {
+   "step": "digest-transcript",
+   "receipt": "sha256:54738083f796ded940716e39afdcda83f2b8eb60f51a26e46d2e1df474c5ea79",
+   "file": "sha256-54738083f796ded940716e39afdcda83f2b8eb60f51a26e46d2e1df474c5ea79.json"
+  },
+  {
+   "step": "digest-records",
+   "receipt": "sha256:e4fc1e6cbddf026d5a6b2541cb4d3ff52506fc02b32a7e43bbc64366a320bbfd",
+   "file": "sha256-e4fc1e6cbddf026d5a6b2541cb4d3ff52506fc02b32a7e43bbc64366a320bbfd.json"
+  },
+  {
+   "step": "reconcile (agent act)",
+   "receipt": "sha256:2f694381faf65bbe7a6cd41e206837d7b125811a80f3047814da98013d079351",
+   "file": "sha256-2f694381faf65bbe7a6cd41e206837d7b125811a80f3047814da98013d079351.json"
+  },
+  {
+   "step": "finalize",
+   "receipt": "sha256:294ec55f7b3557e79f16114c241658e414281d3fdbc3dcfb043c663aac7e2278",
+   "file": "sha256-294ec55f7b3557e79f16114c241658e414281d3fdbc3dcfb043c663aac7e2278.json"
+  },
+  {
+   "step": "prepare-write",
+   "receipt": "sha256:6b644673aab659e8dd2dd997b9c354c8e6cef1c03ae72564f31c16b9512652eb",
+   "file": "sha256-6b644673aab659e8dd2dd997b9c354c8e6cef1c03ae72564f31c16b9512652eb.json"
+  },
+  {
+   "step": "apply-write (tool: fs.write)",
+   "receipt": "sha256:f1bc17df6c64e3df3003ce68feef12e21c5dc314b2633de85c38886792e5b745",
+   "file": "sha256-f1bc17df6c64e3df3003ce68feef12e21c5dc314b2633de85c38886792e5b745.json"
+  },
+  {
+   "step": "record-write",
+   "receipt": "sha256:6a51e60e357421b5d5ee236f7fd573b7528cfe2a01f1306da0b9809fa0d5b09f",
+   "file": "sha256-6a51e60e357421b5d5ee236f7fd573b7528cfe2a01f1306da0b9809fa0d5b09f.json"
+  }
+ ]
+}

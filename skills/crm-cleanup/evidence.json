@@ -1,14 +1,64 @@
 {
-  "schema": "frantic.evidence.v1",
-  "bounty": 79,
-  "summary": "crm-cleanup published to the runx registry as iliasabk/crm-cleanup@sha-53fe0b2c748b; local and installed-package harness both pass 4/4 cases; dogfood reconciled a real Norfolk Southern Q3 2021 earnings call transcript (live-fetched via web-fetch) against CRM records read from a live data-store read_projection, sealing a proposed update packet with write_performed=false and the crm-operator-or-human-approver gate.",
-  "observations": [
-    {"claim_type": "cli_version", "runx_version": "runx-cli 0.9.1"},
-    {"claim_type": "publish", "command": "runx registry publish ./skills/crm-cleanup/SKILL.md --registry https://api.runx.ai", "result": "iliasabk/crm-cleanup@sha-53fe0b2c748b", "public_url": "https://runx.ai/x/iliasabk/crm-cleanup"},
-    {"claim_type": "local_harness", "command": "runx harness ./skills/crm-cleanup", "result": "4/4 cases passed, 0 assertion errors"},
-    {"claim_type": "dogfood_records_source", "command": "runx skill ./skills/data-store read_projection (local://runx-data-store/crm-dogfood)", "result": "CRM account record read from a live sqlite event-store projection", "receipt": "sha256:1bdaccc51d026fc96b825de45ecf30712e3e90157a4eec06eb32176f47eb5e2f"},
-    {"claim_type": "dogfood_transcript_source", "command": "runx skill ./skills/web-fetch -i url=https://raw.githubusercontent.com/rajdeep345/ECTSum/main/data/final/val/ects/NSC_q3_2021.txt", "result": "real Norfolk Southern Q3 2021 earnings call transcript fetched live (ECTSum dataset, EMNLP 2022)", "receipt": "sha256:d72528f7ec28ba2a87c9a4415bb30b625c64972a1024b3a8ba15200c7ef06774"},
-    {"claim_type": "dogfood_run", "command": "runx skill ./skills/crm-cleanup --inputs crm_dogfood_inputs.json; runx resume run_reconcile_46e57495be69e8df", "result": "decision=proposed, 2 allowlisted updates each traced to a verbatim quote, write_performed=false, validation pass", "receipt": "sha256:922db219f959196b795b546bc8a832da6ae1e7f1c7dee3eec8d1797574a3eb2d"}
-  ],
-  "dogfood": {"transcript_source_url": "https://raw.githubusercontent.com/rajdeep345/ECTSum/main/data/final/val/ects/NSC_q3_2021.txt", "records_source": "data-store read_projection local://runx-data-store/crm-dogfood", "run_id": "run_reconcile_46e57495be69e8df", "decision": "proposed", "validation": "pass", "receipt": "sha256:922db219f959196b795b546bc8a832da6ae1e7f1c7dee3eec8d1797574a3eb2d"}
+ "schema": "frantic.evidence.v1",
+ "bounty": 79,
+ "summary": "crm-cleanup published to the runx registry as iliasabk/crm-cleanup@sha-53fe0b2c748b; local and installed-package harness both pass 4/4 cases; dogfood reconciled a real Norfolk Southern Q3 2021 earnings call transcript (live-fetched via web-fetch) against CRM records read from a live data-store read_projection, sealing a proposed update packet with write_performed=false and the crm-operator-or-human-approver gate.",
+ "observations": [
+  {
+   "claim_type": "cli_version",
+   "runx_version": "runx-cli 0.9.1"
+  },
+  {
+   "claim_type": "publish",
+   "command": "runx registry publish ./skills/crm-cleanup/SKILL.md --registry https://api.runx.ai",
+   "result": "iliasabk/crm-cleanup@sha-53fe0b2c748b",
+   "public_url": "https://runx.ai/x/iliasabk/crm-cleanup"
+  },
+  {
+   "claim_type": "local_harness",
+   "command": "runx harness ./skills/crm-cleanup",
+   "result": "4/4 cases passed, 0 assertion errors"
+  },
+  {
+   "claim_type": "dogfood_records_source",
+   "command": "runx skill ./skills/data-store read_projection (local://runx-data-store/crm-dogfood)",
+   "result": "CRM account record read from a live sqlite event-store projection",
+   "receipt": "sha256:1bdaccc51d026fc96b825de45ecf30712e3e90157a4eec06eb32176f47eb5e2f"
+  },
+  {
+   "claim_type": "dogfood_transcript_source",
+   "command": "runx skill ./skills/web-fetch -i url=https://raw.githubusercontent.com/rajdeep345/ECTSum/main/data/final/val/ects/NSC_q3_2021.txt",
+   "result": "real Norfolk Southern Q3 2021 earnings call transcript fetched live (ECTSum dataset, EMNLP 2022)",
+   "receipt": "sha256:d72528f7ec28ba2a87c9a4415bb30b625c64972a1024b3a8ba15200c7ef06774"
+  },
+  {
+   "claim_type": "dogfood_run",
+   "command": "runx skill ./skills/crm-cleanup --inputs crm_dogfood_inputs.json; runx resume run_reconcile_46e57495be69e8df",
+   "result": "decision=proposed, 2 allowlisted updates each traced to a verbatim quote, write_performed=false, validation pass",
+   "receipt": "sha256:922db219f959196b795b546bc8a832da6ae1e7f1c7dee3eec8d1797574a3eb2d"
+  },
+  {
+   "claim_type": "dogfood_live_source_read",
+   "command": "runx skill iliasabk/crm-cleanup@sha-60be8f50f1b5 reconcile-live --inputs live_inputs.json --registry https://api.runx.ai; runx resume run_reconcile-live_93bed87fb5d96fd3 live_answers.json",
+   "result": "registry-bound dogfood re-run on crm-cleanup 0.2.1 reconcile-live runner: read-source-fetch executed governed web.fetch inside the run against the public connector export (final_url + status + extracted body in graph-state.json), source_read shaped deterministically, decision=applied, write executed",
+   "receipt": "sha256:d454bb7747e64e1cb43afeccc24ffe9857a1902d28421c7e2824048c927c9a46",
+   "receipt_tree": "skills/crm-cleanup/harness/dogfood_live/ (root + 9 step receipts + manifest.json + graph-state.json)"
+  }
+ ],
+ "dogfood": {
+  "transcript_source_url": "https://raw.githubusercontent.com/rajdeep345/ECTSum/main/data/final/val/ects/NSC_q3_2021.txt",
+  "records_source": "data-store read_projection local://runx-data-store/crm-dogfood",
+  "run_id": "run_reconcile_46e57495be69e8df",
+  "decision": "proposed",
+  "validation": "pass",
+  "receipt": "sha256:922db219f959196b795b546bc8a832da6ae1e7f1c7dee3eec8d1797574a3eb2d"
+ },
+ "dogfood_live": {
+  "skill": "iliasabk/crm-cleanup@sha-60be8f50f1b5",
+  "runner": "reconcile-live",
+  "run_id": "run_reconcile-live_93bed87fb5d96fd3",
+  "records_source_url": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+  "source_read_tool": "web.fetch",
+  "decision": "applied",
+  "receipt": "sha256:d454bb7747e64e1cb43afeccc24ffe9857a1902d28421c7e2824048c927c9a46"
+ }
 }

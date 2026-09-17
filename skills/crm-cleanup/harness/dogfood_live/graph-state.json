@@ -1,0 +1,2880 @@
+{
+  "schema": "runx.graph_skill_state.v1",
+  "run_id": "run_reconcile-live_93bed87fb5d96fd3",
+  "runner_name": "reconcile-live",
+  "package_digest": "sha256:a84c988ff308a694656a3a6ff8086956798bf47339aaa2230f2d86902a052be9",
+  "execution_closure_digest": "sha256:edec32c7d3e52149b7d81cec7e2919627847980b92ddfe5cad188338c0a60df4",
+  "graph_inputs": {
+    "crm_schema": {
+      "allowed_fields": [
+        "account_status",
+        "next_action",
+        "health_score"
+      ]
+    },
+    "crm_source": {
+      "kind": "web_fetch",
+      "url": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json"
+    },
+    "transcript": "Call with Norfolk Southern on Q3 volumes. Dana flagged the intermodal lane is behind plan and wants a recovery review before the next contract call. Next step: send the updated volume forecast by Friday.",
+    "write_target": {
+      "kind": "mock",
+      "path": "outbox/crm/records.json"
+    }
+  },
+  "resolution_answers": {
+    "values": {
+      "agent_task.crm-cleanup-reconcile.output": {
+        "update_draft": {
+          "takeaways": [
+            "Norfolk Southern's intermodal lane is behind plan; a recovery review is required before the next contract call.",
+            "Next step: send the updated volume forecast by Friday."
+          ],
+          "updates": [
+            {
+              "evidence_quote": "the intermodal lane is behind plan",
+              "field": "account_status",
+              "record_id": "acct-nsc",
+              "to": "at_risk"
+            },
+            {
+              "evidence_quote": "send the updated volume forecast by Friday",
+              "field": "next_action",
+              "record_id": "acct-nsc",
+              "to": "send the updated volume forecast by Friday"
+            }
+          ]
+        }
+      }
+    },
+    "human_approvals": [],
+    "request_digests": {},
+    "digest_bound_requests": []
+  },
+  "checkpoint": {
+    "graph_name": "crm-cleanup-reconcile-live",
+    "state": {
+      "graphId": "crm-cleanup-reconcile-live",
+      "status": "succeeded",
+      "steps": [
+        {
+          "stepId": "read-source-fetch",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:24.763Z",
+          "completedAt": "2026-09-17T10:08:24.763Z",
+          "receiptId": "sha256:13cfdc1c011d3d3b6149d3d9c3b0710e29dde57ff63935ac9c2561bcfeadccdc",
+          "outputs": {
+            "fetch_result": {
+              "data": {
+                "blockers": [],
+                "content_digest": "sha256:dea54408436834c7248b17b5ec5ffb7d4b9d226cdef3bf006e12c72836fbb574",
+                "decision": "ready",
+                "extract_mode": "text",
+                "extracted": "{ \"crm_records\": [{\"id\":\"acct-nsc\",\"account_name\":\"Norfolk Southern\",\"account_status\":\"active\",\"next_action\":\"none\",\"health_score\":72}], \"crm_schema\": {\"allowed_fields\":[\"account_status\",\"next_action\",\"health_score\"]}, \"source\": \"read via runx data-store read_projection on local://runx-data-store/crm-dogfood (sealed append sha256:4e16734c..., read sha256:1bdaccc5...)\" }",
+                "final_url": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+                "policy": {
+                  "allowlist_checked": [
+                    "*"
+                  ],
+                  "allowlist_decision": "allowed",
+                  "attempted_host": "raw.githubusercontent.com"
+                },
+                "provenance": {
+                  "bytes": 379,
+                  "fetched_at": "2026-09-17T10:08:24.990Z",
+                  "redirects": [],
+                  "truncated": false
+                },
+                "status": 200
+              }
+            }
+          }
+        },
+        {
+          "stepId": "read-source",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:24.763Z",
+          "completedAt": "2026-09-17T10:08:24.763Z",
+          "receiptId": "sha256:c17d699167bb8e85dade7d777b6dc29ab93bbf3e23f8f7f8c984d7fa34efe151",
+          "outputs": {
+            "source_read": {
+              "data": {
+                "content_digest": "sha256:dea54408436834c7248b17b5ec5ffb7d4b9d226cdef3bf006e12c72836fbb574",
+                "fetch_status": 200,
+                "fetched_ref": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+                "read_kind": "web_fetch",
+                "records": [
+                  {
+                    "account_name": "Norfolk Southern",
+                    "account_status": "active",
+                    "health_score": 72,
+                    "id": "acct-nsc",
+                    "next_action": "none"
+                  }
+                ],
+                "truncated": false
+              }
+            }
+          }
+        },
+        {
+          "stepId": "digest-transcript",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:24.763Z",
+          "completedAt": "2026-09-17T10:08:24.763Z",
+          "receiptId": "sha256:54738083f796ded940716e39afdcda83f2b8eb60f51a26e46d2e1df474c5ea79",
+          "outputs": {
+            "digest_result": {
+              "data": {
+                "algorithm": "sha256",
+                "digest": "sha256:9a70bb704307448b20017fe4acbd24eded34ddaf58f3d6e65f5283a46cbd6e73"
+              }
+            }
+          }
+        },
+        {
+          "stepId": "digest-records",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:24.763Z",
+          "completedAt": "2026-09-17T10:08:24.763Z",
+          "receiptId": "sha256:e4fc1e6cbddf026d5a6b2541cb4d3ff52506fc02b32a7e43bbc64366a320bbfd",
+          "outputs": {
+            "digest_result": {
+              "data": {
+                "algorithm": "sha256",
+                "digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8"
+              }
+            }
+          }
+        },
+        {
+          "stepId": "reconcile",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:24.763Z",
+          "completedAt": "2026-09-17T10:08:33.182Z",
+          "receiptId": "sha256:2f694381faf65bbe7a6cd41e206837d7b125811a80f3047814da98013d079351",
+          "outputs": {
+            "update_draft": {
+              "data": {
+                "takeaways": [
+                  "Norfolk Southern's intermodal lane is behind plan; a recovery review is required before the next contract call.",
+                  "Next step: send the updated volume forecast by Friday."
+                ],
+                "updates": [
+                  {
+                    "evidence_quote": "the intermodal lane is behind plan",
+                    "field": "account_status",
+                    "record_id": "acct-nsc",
+                    "to": "at_risk"
+                  },
+                  {
+                    "evidence_quote": "send the updated volume forecast by Friday",
+                    "field": "next_action",
+                    "record_id": "acct-nsc",
+                    "to": "send the updated volume forecast by Friday"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "stepId": "finalize",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:33.182Z",
+          "completedAt": "2026-09-17T10:08:33.182Z",
+          "receiptId": "sha256:294ec55f7b3557e79f16114c241658e414281d3fdbc3dcfb043c663aac7e2278",
+          "outputs": {
+            "crm_cleanup": {
+              "data": {
+                "decision": "applied",
+                "field_updates": [
+                  {
+                    "evidence_quote": "the intermodal lane is behind plan",
+                    "field": "account_status",
+                    "from": "active",
+                    "record_id": "acct-nsc",
+                    "to": "at_risk"
+                  },
+                  {
+                    "evidence_quote": "send the updated volume forecast by Friday",
+                    "field": "next_action",
+                    "from": "none",
+                    "record_id": "acct-nsc",
+                    "to": "send the updated volume forecast by Friday"
+                  }
+                ],
+                "reason": "Applied 2 allowlisted field update(s) through the mock CRM transport, each traced to transcript evidence.",
+                "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                "rejected_updates": [],
+                "schema": "runx.crm_cleanup.v2",
+                "source": {
+                  "fetched_ref": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+                  "read_kind": "web_fetch"
+                },
+                "takeaways": [
+                  "Norfolk Southern's intermodal lane is behind plan; a recovery review is required before the next contract call.",
+                  "Next step: send the updated volume forecast by Friday."
+                ],
+                "transcript_digest": "sha256:9a70bb704307448b20017fe4acbd24eded34ddaf58f3d6e65f5283a46cbd6e73",
+                "validation": {
+                  "findings": [],
+                  "status": "pass"
+                },
+                "write_plan": {
+                  "bound_to": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                  "schema": "runx.write_plan.v1",
+                  "status": "ready",
+                  "transport": "mock-crm-outbox"
+                }
+              }
+            }
+          }
+        },
+        {
+          "stepId": "prepare-write",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:33.182Z",
+          "completedAt": "2026-09-17T10:08:33.182Z",
+          "receiptId": "sha256:6b644673aab659e8dd2dd997b9c354c8e6cef1c03ae72564f31c16b9512652eb",
+          "outputs": {
+            "write_draft": {
+              "data": {
+                "after_count": 1,
+                "before": [
+                  {
+                    "field": "account_status",
+                    "from": "active",
+                    "record_id": "acct-nsc",
+                    "to": "at_risk"
+                  },
+                  {
+                    "field": "next_action",
+                    "from": "none",
+                    "record_id": "acct-nsc",
+                    "to": "send the updated volume forecast by Friday"
+                  }
+                ],
+                "contents": "{\n  \"records\": [\n    {\n      \"account_name\": \"Norfolk Southern\",\n      \"account_status\": \"at_risk\",\n      \"health_score\": 72,\n      \"id\": \"acct-nsc\",\n      \"next_action\": \"send the updated volume forecast by Friday\"\n    }\n  ]\n}",
+                "path": "outbox/crm/records.json"
+              }
+            }
+          }
+        },
+        {
+          "stepId": "apply-write",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:33.182Z",
+          "completedAt": "2026-09-17T10:08:33.182Z",
+          "receiptId": "sha256:f1bc17df6c64e3df3003ce68feef12e21c5dc314b2633de85c38886792e5b745",
+          "outputs": {
+            "file_write": {
+              "data": {
+                "bytes_written": 227,
+                "path": "outbox/crm/records.json",
+                "repo_root": "/private/tmp/crm-dogfood-v2",
+                "sha256": "abf49c76b63bc7bc20004c0180b8e3e995930026ffa7b44885010f2b5ada03f4"
+              }
+            }
+          }
+        },
+        {
+          "stepId": "record-write",
+          "status": "succeeded",
+          "attempts": 1,
+          "startedAt": "2026-09-17T10:08:33.182Z",
+          "completedAt": "2026-09-17T10:08:33.182Z",
+          "receiptId": "sha256:6a51e60e357421b5d5ee236f7fd573b7528cfe2a01f1306da0b9809fa0d5b09f",
+          "outputs": {
+            "write_result": {
+              "data": {
+                "after": [
+                  {
+                    "field": "account_status",
+                    "record_id": "acct-nsc",
+                    "value": "at_risk"
+                  },
+                  {
+                    "field": "next_action",
+                    "record_id": "acct-nsc",
+                    "value": "send the updated volume forecast by Friday"
+                  }
+                ],
+                "applied_updates": 2,
+                "before": [
+                  {
+                    "field": "account_status",
+                    "from": "active",
+                    "record_id": "acct-nsc",
+                    "to": "at_risk"
+                  },
+                  {
+                    "field": "next_action",
+                    "from": "none",
+                    "record_id": "acct-nsc",
+                    "to": "send the updated volume forecast by Friday"
+                  }
+                ],
+                "bound_to": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                "executed": true,
+                "path": "outbox/crm/records.json",
+                "schema": "runx.write_result.v1",
+                "transport": "mock-crm-outbox"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "steps": [
+      {
+        "step_id": "read-source-fetch",
+        "attempt": 1,
+        "skill": "tool:web.fetch",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "fetch_result": {
+            "data": {
+              "blockers": [],
+              "content_digest": "sha256:dea54408436834c7248b17b5ec5ffb7d4b9d226cdef3bf006e12c72836fbb574",
+              "decision": "ready",
+              "extract_mode": "text",
+              "extracted": "{ \"crm_records\": [{\"id\":\"acct-nsc\",\"account_name\":\"Norfolk Southern\",\"account_status\":\"active\",\"next_action\":\"none\",\"health_score\":72}], \"crm_schema\": {\"allowed_fields\":[\"account_status\",\"next_action\",\"health_score\"]}, \"source\": \"read via runx data-store read_projection on local://runx-data-store/crm-dogfood (sealed append sha256:4e16734c..., read sha256:1bdaccc5...)\" }",
+              "final_url": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+              "policy": {
+                "allowlist_checked": [
+                  "*"
+                ],
+                "allowlist_decision": "allowed",
+                "attempted_host": "raw.githubusercontent.com"
+              },
+              "provenance": {
+                "bytes": 379,
+                "fetched_at": "2026-09-17T10:08:24.990Z",
+                "redirects": [],
+                "truncated": false
+              },
+              "status": 200
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 229
+          },
+          "metadata": {
+            "execution_boundary": {
+              "kind": "native_capability"
+            }
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:13cfdc1c011d3d3b6149d3d9c3b0710e29dde57ff63935ac9c2561bcfeadccdc",
+          "created_at": "2026-09-17T10:08:24.763Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:0a0bc78320c86707d214153440e4d0bc9886cdebc1f749faef04890bdef16575"
+          },
+          "digest": "sha256:0a0bc78320c86707d214153440e4d0bc9886cdebc1f749faef04890bdef16575",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-read-source-fetch-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-read-source-fetch-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-read-source-fetch-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_read-source-fetch",
+              "locator": "sha256:37c80b6213a8404f273233099d8d5f90ba10d2ca289bb64181dcbc47eaad16b9"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "native_capability"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_read-source-fetch",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node read-source-fetch",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_read-source-fetch",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ]
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_read-source-fetch",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step read-source-fetch",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step read-source-fetch",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [
+                    {
+                      "type": "artifact",
+                      "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "provider": "runx",
+                      "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "label": "prepared operator context"
+                    }
+                  ],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:24.763Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step read-source-fetch completed",
+            "closed_at": "2026-09-17T10:08:24.763Z",
+            "last_observed_at": "2026-09-17T10:08:24.763Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [
+                  {
+                    "type": "artifact",
+                    "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "provider": "runx",
+                    "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "label": "prepared operator context"
+                  }
+                ],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "read-source-fetch",
+          "receiptId": "sha256:13cfdc1c011d3d3b6149d3d9c3b0710e29dde57ff63935ac9c2561bcfeadccdc"
+        }
+      },
+      {
+        "step_id": "read-source",
+        "attempt": 1,
+        "skill": "read-source",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "source_read": {
+            "data": {
+              "content_digest": "sha256:dea54408436834c7248b17b5ec5ffb7d4b9d226cdef3bf006e12c72836fbb574",
+              "fetch_status": 200,
+              "fetched_ref": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+              "read_kind": "web_fetch",
+              "records": [
+                {
+                  "account_name": "Norfolk Southern",
+                  "account_status": "active",
+                  "health_score": 72,
+                  "id": "acct-nsc",
+                  "next_action": "none"
+                }
+              ],
+              "truncated": false
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 62
+          },
+          "metadata": {
+            "contract_verification": {
+              "output_contract_sha256": "sha256:53a80e6740413d1af47388e501ee6905c6866c503f0e8f7837bdc57c4069aa83"
+            },
+            "execution_boundary": {
+              "kind": "deterministic_worker"
+            },
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            },
+            "javascript_runtime": "runx-js-worker",
+            "javascript_state": "completed"
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:c17d699167bb8e85dade7d777b6dc29ab93bbf3e23f8f7f8c984d7fa34efe151",
+          "created_at": "2026-09-17T10:08:24.763Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:05f342970abb444374abe935949b76890e7d17481a4d6c3cd02ab71b4a957145"
+          },
+          "digest": "sha256:05f342970abb444374abe935949b76890e7d17481a4d6c3cd02ab71b4a957145",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-read-source-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-read-source-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-read-source-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_read-source",
+              "locator": "sha256:713dce6090f3bd49832330fc4467dd0e318c5091776c07036e0659e9d2b39d6e"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "deterministic_worker"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_read-source",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node read-source",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_read-source",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ]
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_read-source",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step read-source",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "output_contract_verified",
+                    "statement": "Runner result satisfies its declared output contract",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step read-source",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [
+                    {
+                      "type": "artifact",
+                      "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "provider": "runx",
+                      "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "label": "prepared operator context"
+                    }
+                  ],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                },
+                {
+                  "criterion_id": "output_contract_verified",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:output_contract_verified:sha256:53a80e6740413d1af47388e501ee6905c6866c503f0e8f7837bdc57c4069aa83"
+                    }
+                  ],
+                  "summary": "Runner result satisfies its declared output contract"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:24.763Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step read-source completed",
+            "closed_at": "2026-09-17T10:08:24.763Z",
+            "last_observed_at": "2026-09-17T10:08:24.763Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [
+                  {
+                    "type": "artifact",
+                    "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "provider": "runx",
+                    "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "label": "prepared operator context"
+                  }
+                ],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              },
+              {
+                "criterion_id": "output_contract_verified",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:output_contract_verified:sha256:53a80e6740413d1af47388e501ee6905c6866c503f0e8f7837bdc57c4069aa83"
+                  }
+                ],
+                "summary": "Runner result satisfies its declared output contract"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          },
+          "metadata": {
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            }
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "read-source",
+          "receiptId": "sha256:c17d699167bb8e85dade7d777b6dc29ab93bbf3e23f8f7f8c984d7fa34efe151"
+        }
+      },
+      {
+        "step_id": "digest-transcript",
+        "attempt": 1,
+        "skill": "tool:data.digest",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "digest_result": {
+            "data": {
+              "algorithm": "sha256",
+              "digest": "sha256:9a70bb704307448b20017fe4acbd24eded34ddaf58f3d6e65f5283a46cbd6e73"
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 0
+          },
+          "metadata": {
+            "execution_boundary": {
+              "kind": "native_capability"
+            }
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:54738083f796ded940716e39afdcda83f2b8eb60f51a26e46d2e1df474c5ea79",
+          "created_at": "2026-09-17T10:08:24.763Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:195ca5614c4f0014e65c61184c62e012c70c1b73d874d4116524d3a8bb9b0263"
+          },
+          "digest": "sha256:195ca5614c4f0014e65c61184c62e012c70c1b73d874d4116524d3a8bb9b0263",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-digest-transcript-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-digest-transcript-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-digest-transcript-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_digest-transcript",
+              "locator": "sha256:c5053adda29c4296a0e784e13cfc50c8c1ba1ee3c14033c01da384d0c2ce6462"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "native_capability"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_digest-transcript",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node digest-transcript",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_digest-transcript",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ]
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_digest-transcript",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step digest-transcript",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step digest-transcript",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [
+                    {
+                      "type": "artifact",
+                      "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "provider": "runx",
+                      "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "label": "prepared operator context"
+                    }
+                  ],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:24.763Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step digest-transcript completed",
+            "closed_at": "2026-09-17T10:08:24.763Z",
+            "last_observed_at": "2026-09-17T10:08:24.763Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [
+                  {
+                    "type": "artifact",
+                    "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "provider": "runx",
+                    "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "label": "prepared operator context"
+                  }
+                ],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "digest-transcript",
+          "receiptId": "sha256:54738083f796ded940716e39afdcda83f2b8eb60f51a26e46d2e1df474c5ea79"
+        }
+      },
+      {
+        "step_id": "digest-records",
+        "attempt": 1,
+        "skill": "tool:data.digest",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "digest_result": {
+            "data": {
+              "algorithm": "sha256",
+              "digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8"
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 0
+          },
+          "metadata": {
+            "execution_boundary": {
+              "kind": "native_capability"
+            }
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:e4fc1e6cbddf026d5a6b2541cb4d3ff52506fc02b32a7e43bbc64366a320bbfd",
+          "created_at": "2026-09-17T10:08:24.763Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:7a7310a0c5325df5a18dc8367416cb826fb247cb21f536f1cb707c6df8569efa"
+          },
+          "digest": "sha256:7a7310a0c5325df5a18dc8367416cb826fb247cb21f536f1cb707c6df8569efa",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-digest-records-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-digest-records-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-digest-records-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_digest-records",
+              "locator": "sha256:4eaf21e9b8124d7e02a78bae51ef3111dbd58653246912eb28ae7402b56837fd"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "native_capability"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_digest-records",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node digest-records",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_digest-records",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ]
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_digest-records",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step digest-records",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step digest-records",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [
+                    {
+                      "type": "artifact",
+                      "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "provider": "runx",
+                      "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                      "label": "prepared operator context"
+                    }
+                  ],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [
+                {
+                  "type": "artifact",
+                  "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "provider": "runx",
+                  "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                  "label": "prepared operator context"
+                }
+              ],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:24.763Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step digest-records completed",
+            "closed_at": "2026-09-17T10:08:24.763Z",
+            "last_observed_at": "2026-09-17T10:08:24.763Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [
+                  {
+                    "type": "artifact",
+                    "uri": "runx:artifact:operator_context:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "provider": "runx",
+                    "locator": "sha256:1228b34bb83aa79de32aa94e99f7dfd84d7b0ecb3da78ee99ce7775960a7cc35",
+                    "label": "prepared operator context"
+                  }
+                ],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "digest-records",
+          "receiptId": "sha256:e4fc1e6cbddf026d5a6b2541cb4d3ff52506fc02b32a7e43bbc64366a320bbfd"
+        }
+      },
+      {
+        "step_id": "reconcile",
+        "attempt": 1,
+        "skill": "run:agent-task",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "update_draft": {
+            "data": {
+              "takeaways": [
+                "Norfolk Southern's intermodal lane is behind plan; a recovery review is required before the next contract call.",
+                "Next step: send the updated volume forecast by Friday."
+              ],
+              "updates": [
+                {
+                  "evidence_quote": "the intermodal lane is behind plan",
+                  "field": "account_status",
+                  "record_id": "acct-nsc",
+                  "to": "at_risk"
+                },
+                {
+                  "evidence_quote": "send the updated volume forecast by Friday",
+                  "field": "next_action",
+                  "record_id": "acct-nsc",
+                  "to": "send the updated volume forecast by Friday"
+                }
+              ]
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 0
+          },
+          "metadata": {
+            "contract_verification": {
+              "output_contract_sha256": "sha256:a4e5a9786a83241fe7b01e75e6c570829687d62ae3c8cb16a89118dbad09f406",
+              "voice_profile_sha256": "sha256:b890ab7e9d39860174a0f1b6f99e4ff3d9aa4187824aace3a21811b8317a5920"
+            },
+            "voice_profile": "sha256:b890ab7e9d39860174a0f1b6f99e4ff3d9aa4187824aace3a21811b8317a5920"
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:2f694381faf65bbe7a6cd41e206837d7b125811a80f3047814da98013d079351",
+          "created_at": "2026-09-17T10:08:33.182Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:7b48331ff12b3cb37d9795d2955db2316a33baa14e7ed47929a263a83e552ac0"
+          },
+          "digest": "sha256:7b48331ff12b3cb37d9795d2955db2316a33baa14e7ed47929a263a83e552ac0",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-reconcile-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-reconcile-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-reconcile-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_reconcile",
+              "locator": "sha256:89f74dedd47a74b8eac1baca99b1880f39e571f67e513594a9d99e7d4699f2d4"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_reconcile",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node reconcile",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_reconcile",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": []
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_reconcile",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step reconcile",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "output_contract_verified",
+                    "statement": "Runner result satisfies its declared output contract",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "voice_profile_applied",
+                    "statement": "Agent invocation used the resolved voice profile",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step reconcile",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                },
+                {
+                  "criterion_id": "output_contract_verified",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:output_contract_verified:sha256:a4e5a9786a83241fe7b01e75e6c570829687d62ae3c8cb16a89118dbad09f406"
+                    }
+                  ],
+                  "summary": "Runner result satisfies its declared output contract"
+                },
+                {
+                  "criterion_id": "voice_profile_applied",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:voice_profile_applied:sha256:b890ab7e9d39860174a0f1b6f99e4ff3d9aa4187824aace3a21811b8317a5920"
+                    }
+                  ],
+                  "summary": "Agent invocation used the resolved voice profile"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:33.182Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "agent_act_closed",
+            "summary": "agent act closed with closed",
+            "closed_at": "2026-09-17T10:08:33.182Z",
+            "last_observed_at": "2026-09-17T10:08:33.182Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              },
+              {
+                "criterion_id": "output_contract_verified",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:output_contract_verified:sha256:a4e5a9786a83241fe7b01e75e6c570829687d62ae3c8cb16a89118dbad09f406"
+                  }
+                ],
+                "summary": "Runner result satisfies its declared output contract"
+              },
+              {
+                "criterion_id": "voice_profile_applied",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:voice_profile_applied:sha256:b890ab7e9d39860174a0f1b6f99e4ff3d9aa4187824aace3a21811b8317a5920"
+                  }
+                ],
+                "summary": "Agent invocation used the resolved voice profile"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "reconcile",
+          "receiptId": "sha256:2f694381faf65bbe7a6cd41e206837d7b125811a80f3047814da98013d079351"
+        }
+      },
+      {
+        "step_id": "finalize",
+        "attempt": 1,
+        "skill": "finalize",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "crm_cleanup": {
+            "data": {
+              "decision": "applied",
+              "field_updates": [
+                {
+                  "evidence_quote": "the intermodal lane is behind plan",
+                  "field": "account_status",
+                  "from": "active",
+                  "record_id": "acct-nsc",
+                  "to": "at_risk"
+                },
+                {
+                  "evidence_quote": "send the updated volume forecast by Friday",
+                  "field": "next_action",
+                  "from": "none",
+                  "record_id": "acct-nsc",
+                  "to": "send the updated volume forecast by Friday"
+                }
+              ],
+              "reason": "Applied 2 allowlisted field update(s) through the mock CRM transport, each traced to transcript evidence.",
+              "records_digest": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+              "rejected_updates": [],
+              "schema": "runx.crm_cleanup.v2",
+              "source": {
+                "fetched_ref": "https://raw.githubusercontent.com/iliasabk/runx/3bfd45c7/skills/crm-cleanup/fixtures/nsc_records.json",
+                "read_kind": "web_fetch"
+              },
+              "takeaways": [
+                "Norfolk Southern's intermodal lane is behind plan; a recovery review is required before the next contract call.",
+                "Next step: send the updated volume forecast by Friday."
+              ],
+              "transcript_digest": "sha256:9a70bb704307448b20017fe4acbd24eded34ddaf58f3d6e65f5283a46cbd6e73",
+              "validation": {
+                "findings": [],
+                "status": "pass"
+              },
+              "write_plan": {
+                "bound_to": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+                "schema": "runx.write_plan.v1",
+                "status": "ready",
+                "transport": "mock-crm-outbox"
+              }
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 20
+          },
+          "metadata": {
+            "contract_verification": {
+              "output_contract_sha256": "sha256:2044f3d96b78b568ac59a41a2561aa3b13316967231e62e2d3b77ed2ca5d03b0"
+            },
+            "execution_boundary": {
+              "kind": "deterministic_worker"
+            },
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            },
+            "javascript_runtime": "runx-js-worker",
+            "javascript_state": "completed"
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:294ec55f7b3557e79f16114c241658e414281d3fdbc3dcfb043c663aac7e2278",
+          "created_at": "2026-09-17T10:08:33.182Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:feb774a5e876d38cbcf84d8b9e45a759d057dcfc36c0ef94f0cc9bc9e76a4162"
+          },
+          "digest": "sha256:feb774a5e876d38cbcf84d8b9e45a759d057dcfc36c0ef94f0cc9bc9e76a4162",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-finalize-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-finalize-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-finalize-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_finalize",
+              "locator": "sha256:c8f30554e74bfd382d5d277e34d944291c638b7815b7dd835cd96a540782dbd8"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "deterministic_worker"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_finalize",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node finalize",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_finalize",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": []
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_finalize",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step finalize",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "output_contract_verified",
+                    "statement": "Runner result satisfies its declared output contract",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step finalize",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                },
+                {
+                  "criterion_id": "output_contract_verified",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:output_contract_verified:sha256:2044f3d96b78b568ac59a41a2561aa3b13316967231e62e2d3b77ed2ca5d03b0"
+                    }
+                  ],
+                  "summary": "Runner result satisfies its declared output contract"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:33.182Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step finalize completed",
+            "closed_at": "2026-09-17T10:08:33.182Z",
+            "last_observed_at": "2026-09-17T10:08:33.182Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              },
+              {
+                "criterion_id": "output_contract_verified",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:output_contract_verified:sha256:2044f3d96b78b568ac59a41a2561aa3b13316967231e62e2d3b77ed2ca5d03b0"
+                  }
+                ],
+                "summary": "Runner result satisfies its declared output contract"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          },
+          "metadata": {
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            }
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "finalize",
+          "receiptId": "sha256:294ec55f7b3557e79f16114c241658e414281d3fdbc3dcfb043c663aac7e2278"
+        }
+      },
+      {
+        "step_id": "prepare-write",
+        "attempt": 1,
+        "skill": "prepare-write",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "write_draft": {
+            "data": {
+              "after_count": 1,
+              "before": [
+                {
+                  "field": "account_status",
+                  "from": "active",
+                  "record_id": "acct-nsc",
+                  "to": "at_risk"
+                },
+                {
+                  "field": "next_action",
+                  "from": "none",
+                  "record_id": "acct-nsc",
+                  "to": "send the updated volume forecast by Friday"
+                }
+              ],
+              "contents": "{\n  \"records\": [\n    {\n      \"account_name\": \"Norfolk Southern\",\n      \"account_status\": \"at_risk\",\n      \"health_score\": 72,\n      \"id\": \"acct-nsc\",\n      \"next_action\": \"send the updated volume forecast by Friday\"\n    }\n  ]\n}",
+              "path": "outbox/crm/records.json"
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 4
+          },
+          "metadata": {
+            "contract_verification": {
+              "output_contract_sha256": "sha256:568e954492aad180dd6ade124c6a561db5fc0f2ef53b39ad38e97ebee28735c4"
+            },
+            "execution_boundary": {
+              "kind": "deterministic_worker"
+            },
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            },
+            "javascript_runtime": "runx-js-worker",
+            "javascript_state": "completed"
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:6b644673aab659e8dd2dd997b9c354c8e6cef1c03ae72564f31c16b9512652eb",
+          "created_at": "2026-09-17T10:08:33.182Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:21e471284eec277091f74890c6b696d143d7e53d1364d9828ae9ccd950dd5825"
+          },
+          "digest": "sha256:21e471284eec277091f74890c6b696d143d7e53d1364d9828ae9ccd950dd5825",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-prepare-write-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-prepare-write-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-prepare-write-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_prepare-write",
+              "locator": "sha256:76d8e34b77a444f87f4d64bb369fcfe35811724dae258a73b91666bad40686af"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "deterministic_worker"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_prepare-write",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node prepare-write",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_prepare-write",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": []
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_prepare-write",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step prepare-write",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "output_contract_verified",
+                    "statement": "Runner result satisfies its declared output contract",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step prepare-write",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                },
+                {
+                  "criterion_id": "output_contract_verified",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:output_contract_verified:sha256:568e954492aad180dd6ade124c6a561db5fc0f2ef53b39ad38e97ebee28735c4"
+                    }
+                  ],
+                  "summary": "Runner result satisfies its declared output contract"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:33.182Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step prepare-write completed",
+            "closed_at": "2026-09-17T10:08:33.182Z",
+            "last_observed_at": "2026-09-17T10:08:33.182Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              },
+              {
+                "criterion_id": "output_contract_verified",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:output_contract_verified:sha256:568e954492aad180dd6ade124c6a561db5fc0f2ef53b39ad38e97ebee28735c4"
+                  }
+                ],
+                "summary": "Runner result satisfies its declared output contract"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          },
+          "metadata": {
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            }
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "prepare-write",
+          "receiptId": "sha256:6b644673aab659e8dd2dd997b9c354c8e6cef1c03ae72564f31c16b9512652eb"
+        }
+      },
+      {
+        "step_id": "apply-write",
+        "attempt": 1,
+        "skill": "tool:fs.write",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "file_write": {
+            "data": {
+              "bytes_written": 227,
+              "path": "outbox/crm/records.json",
+              "repo_root": "/private/tmp/crm-dogfood-v2",
+              "sha256": "abf49c76b63bc7bc20004c0180b8e3e995930026ffa7b44885010f2b5ada03f4"
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 13
+          },
+          "metadata": {
+            "execution_boundary": {
+              "kind": "native_capability"
+            }
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:f1bc17df6c64e3df3003ce68feef12e21c5dc314b2633de85c38886792e5b745",
+          "created_at": "2026-09-17T10:08:33.182Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:1070c97abe7f02988ea25a23f8d45987ba7a51eab48f8e8f3ea112e4d485f889"
+          },
+          "digest": "sha256:1070c97abe7f02988ea25a23f8d45987ba7a51eab48f8e8f3ea112e4d485f889",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-apply-write-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-apply-write-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-apply-write-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_apply-write",
+              "locator": "sha256:458b62963071ffa0c645a36b4d11af34e3314d8ce103cdd75ea2b817005e6f47"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "native_capability"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_apply-write",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node apply-write",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_apply-write",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": []
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_apply-write",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step apply-write",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step apply-write",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:33.182Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step apply-write completed",
+            "closed_at": "2026-09-17T10:08:33.182Z",
+            "last_observed_at": "2026-09-17T10:08:33.182Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "apply-write",
+          "receiptId": "sha256:f1bc17df6c64e3df3003ce68feef12e21c5dc314b2633de85c38886792e5b745"
+        }
+      },
+      {
+        "step_id": "record-write",
+        "attempt": 1,
+        "skill": "record-write",
+        "runner": null,
+        "fanout_group": null,
+        "contract": {
+          "write_result": {
+            "data": {
+              "after": [
+                {
+                  "field": "account_status",
+                  "record_id": "acct-nsc",
+                  "value": "at_risk"
+                },
+                {
+                  "field": "next_action",
+                  "record_id": "acct-nsc",
+                  "value": "send the updated volume forecast by Friday"
+                }
+              ],
+              "applied_updates": 2,
+              "before": [
+                {
+                  "field": "account_status",
+                  "from": "active",
+                  "record_id": "acct-nsc",
+                  "to": "at_risk"
+                },
+                {
+                  "field": "next_action",
+                  "from": "none",
+                  "record_id": "acct-nsc",
+                  "to": "send the updated volume forecast by Friday"
+                }
+              ],
+              "bound_to": "sha256:ee8cf26ed1da1f5461841884299ce012002dc1f0b03df0834875137a59c36da8",
+              "executed": true,
+              "path": "outbox/crm/records.json",
+              "schema": "runx.write_result.v1",
+              "transport": "mock-crm-outbox"
+            }
+          }
+        },
+        "outcome": {
+          "status": "Success",
+          "diagnostics": {
+            "kind": "runtime",
+            "duration_ms": 3
+          },
+          "metadata": {
+            "contract_verification": {
+              "output_contract_sha256": "sha256:11ddf0f62afc7d53bb336325395ec9f03a87f1c9b669c3e51bcf03b6987ff18d"
+            },
+            "execution_boundary": {
+              "kind": "deterministic_worker"
+            },
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            },
+            "javascript_runtime": "runx-js-worker",
+            "javascript_state": "completed"
+          }
+        },
+        "receipt": {
+          "schema": "runx.receipt.v1",
+          "id": "sha256:6a51e60e357421b5d5ee236f7fd573b7528cfe2a01f1306da0b9809fa0d5b09f",
+          "created_at": "2026-09-17T10:08:33.182Z",
+          "canonicalization": "runx.receipt.c14n.v1",
+          "issuer": {
+            "type": "local",
+            "kid": "runtime-skeleton",
+            "public_key_sha256": "sha256:runtime-skeleton-public"
+          },
+          "signature": {
+            "alg": "Ed25519",
+            "value": "sig:sha256:e2854660593e2209348635ffcb459edefbcac2bad666157ea1e1ecc7358a74a9"
+          },
+          "digest": "sha256:e2854660593e2209348635ffcb459edefbcac2bad666157ea1e1ecc7358a74a9",
+          "idempotency": {
+            "intent_key": "sha256:crm-cleanup-reconcile-live-record-write-intent",
+            "trigger_fingerprint": "sha256:crm-cleanup-reconcile-live-record-write-trigger",
+            "content_hash": "sha256:crm-cleanup-reconcile-live-record-write-content"
+          },
+          "class": "executed",
+          "subject": {
+            "kind": "skill",
+            "ref": {
+              "type": "harness",
+              "uri": "hrn_crm-cleanup-reconcile-live_record-write",
+              "locator": "sha256:9c6cba3be8ac651a00fb2fd54af26f6b828e201fa20267d183056d894a635509"
+            },
+            "commitments": []
+          },
+          "authority": {
+            "actor_ref": {
+              "type": "principal",
+              "uri": "runx:principal:local_runtime"
+            },
+            "grant_refs": [],
+            "scope_refs": [],
+            "authority_proof_refs": [],
+            "attenuation": {
+              "parent_authority_ref": null,
+              "subset_proof": null
+            },
+            "terms": [],
+            "enforcement": {
+              "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+              "execution_boundary": {
+                "kind": "deterministic_worker"
+              },
+              "redaction_refs": [],
+              "setup_refs": [],
+              "teardown_refs": []
+            }
+          },
+          "signals": [],
+          "decisions": [
+            {
+              "decision_id": "dec_record-write",
+              "choice": "open",
+              "inputs": {
+                "signal_refs": [],
+                "target_ref": null,
+                "opportunity_refs": [],
+                "selection_ref": null
+              },
+              "proposed_intent": {
+                "purpose": "Open runtime node record-write",
+                "legitimacy": "Local graph execution requested this node",
+                "success_criteria": [],
+                "constraints": [],
+                "derived_from": []
+              },
+              "selected_act_id": "act_record-write",
+              "selected_harness_ref": null,
+              "justification": {
+                "summary": "runtime graph planner selected this node",
+                "evidence_refs": []
+              },
+              "closure": null,
+              "artifact_refs": []
+            }
+          ],
+          "acts": [
+            {
+              "id": "act_record-write",
+              "form": "observation",
+              "intent": {
+                "purpose": "Run graph step record-write",
+                "legitimacy": "Runtime graph execution was admitted by the local harness",
+                "success_criteria": [
+                  {
+                    "criterion_id": "step_outcome",
+                    "statement": "runtime step completes successfully",
+                    "required": true
+                  },
+                  {
+                    "criterion_id": "output_contract_verified",
+                    "statement": "Runner result satisfies its declared output contract",
+                    "required": true
+                  }
+                ],
+                "constraints": [],
+                "derived_from": []
+              },
+              "summary": "Executed graph step record-write",
+              "criterion_bindings": [
+                {
+                  "criterion_id": "step_outcome",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [],
+                  "summary": "step completed successfully"
+                },
+                {
+                  "criterion_id": "output_contract_verified",
+                  "status": "verified",
+                  "evidence_refs": [],
+                  "verification_refs": [
+                    {
+                      "type": "verification",
+                      "uri": "runx:verification:output_contract_verified:sha256:11ddf0f62afc7d53bb336325395ec9f03a87f1c9b669c3e51bcf03b6987ff18d"
+                    }
+                  ],
+                  "summary": "Runner result satisfies its declared output contract"
+                }
+              ],
+              "source_refs": [],
+              "target_refs": [],
+              "artifact_refs": [],
+              "closure": {
+                "disposition": "closed",
+                "reason_code": "step_outcome",
+                "summary": "step completed successfully",
+                "closed_at": "2026-09-17T10:08:33.182Z"
+              }
+            }
+          ],
+          "seal": {
+            "disposition": "closed",
+            "reason_code": "step_closed",
+            "summary": "step record-write completed",
+            "closed_at": "2026-09-17T10:08:33.182Z",
+            "last_observed_at": "2026-09-17T10:08:33.182Z",
+            "criteria": [
+              {
+                "criterion_id": "step_outcome",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [],
+                "summary": "step completed successfully"
+              },
+              {
+                "criterion_id": "output_contract_verified",
+                "status": "verified",
+                "evidence_refs": [],
+                "verification_refs": [
+                  {
+                    "type": "verification",
+                    "uri": "runx:verification:output_contract_verified:sha256:11ddf0f62afc7d53bb336325395ec9f03a87f1c9b669c3e51bcf03b6987ff18d"
+                  }
+                ],
+                "summary": "Runner result satisfies its declared output contract"
+              }
+            ]
+          },
+          "lineage": {
+            "children": [],
+            "sync": []
+          },
+          "metadata": {
+            "execution_limits": {
+              "configured": {
+                "javascript.heap_bytes": {
+                  "configured": 67108864,
+                  "maximum": 67108864,
+                  "unit": "bytes"
+                },
+                "javascript.input_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.output_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.queued_jobs": {
+                  "configured": 4096,
+                  "maximum": 4096,
+                  "unit": "jobs"
+                },
+                "javascript.source_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.stack_bytes": {
+                  "configured": 4194304,
+                  "maximum": 4194304,
+                  "unit": "bytes"
+                },
+                "javascript.wall_milliseconds": {
+                  "configured": 2000,
+                  "manifest_field": "source.timeout_seconds",
+                  "maximum": 30000,
+                  "unit": "milliseconds"
+                }
+              }
+            }
+          }
+        },
+        "nested_receipts": [],
+        "admission_witness": {
+          "stepId": "record-write",
+          "receiptId": "sha256:6a51e60e357421b5d5ee236f7fd573b7528cfe2a01f1306da0b9809fa0d5b09f"
+        }
+      }
+    ],
+    "sync_points": [],
+    "journal": {
+      "entries": [
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step read-source-fetch started",
+            "data": {
+              "act_id": "act_read-source-fetch",
+              "kind": "act_started",
+              "step_id": "read-source-fetch"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step read-source-fetch completed",
+            "data": {
+              "act_id": "act_read-source-fetch",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "read-source-fetch"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step read-source started",
+            "data": {
+              "act_id": "act_read-source",
+              "kind": "act_started",
+              "step_id": "read-source"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step read-source completed",
+            "data": {
+              "act_id": "act_read-source",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "read-source"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step digest-transcript started",
+            "data": {
+              "act_id": "act_digest-transcript",
+              "kind": "act_started",
+              "step_id": "digest-transcript"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step digest-transcript completed",
+            "data": {
+              "act_id": "act_digest-transcript",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "digest-transcript"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step digest-records started",
+            "data": {
+              "act_id": "act_digest-records",
+              "kind": "act_started",
+              "step_id": "digest-records"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step digest-records completed",
+            "data": {
+              "act_id": "act_digest-records",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "digest-records"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step reconcile started",
+            "data": {
+              "act_id": "act_reconcile",
+              "kind": "act_started",
+              "step_id": "reconcile"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step reconcile completed",
+            "data": {
+              "act_id": "act_reconcile",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "reconcile"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step finalize started",
+            "data": {
+              "act_id": "act_finalize",
+              "kind": "act_started",
+              "step_id": "finalize"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step finalize completed",
+            "data": {
+              "act_id": "act_finalize",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "finalize"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step prepare-write started",
+            "data": {
+              "act_id": "act_prepare-write",
+              "kind": "act_started",
+              "step_id": "prepare-write"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step prepare-write completed",
+            "data": {
+              "act_id": "act_prepare-write",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "prepare-write"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step apply-write started",
+            "data": {
+              "act_id": "act_apply-write",
+              "kind": "act_started",
+              "step_id": "apply-write"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step apply-write completed",
+            "data": {
+              "act_id": "act_apply-write",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "apply-write"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_started",
+            "message": "step record-write started",
+            "data": {
+              "act_id": "act_record-write",
+              "kind": "act_started",
+              "step_id": "record-write"
+            }
+          }
+        },
+        {
+          "event": {
+            "type": "step_completed",
+            "message": "step record-write completed",
+            "data": {
+              "act_id": "act_record-write",
+              "disposition": "closed",
+              "kind": "act_closed",
+              "step_id": "record-write"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
